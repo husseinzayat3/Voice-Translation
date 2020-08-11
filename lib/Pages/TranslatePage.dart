@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:translator/translator.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -119,6 +120,18 @@ class _TranslationPageState extends State<TranslationPage> {
 
   Future<Null> translateText(targetId) async{
     var translate = await translator.translate(widget.text, from: widget.translateFrom, to: targetId);
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'audio';
+    List<String> audio = prefs.getStringList(key);
+    if(audio!=null){
+      audio.add("${widget.text}_${translate.text}");
+    prefs.setStringList(key, audio);
+    }else{
+      List<String> list = [];
+      list.add("${widget.text}_${translate.text}");
+      prefs.setStringList(key, list);
+    }
+
     setState(() {
       translatedText = translate.text;
     });
