@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:voice_translator/Pages/TranslatePage.dart';
@@ -11,18 +12,31 @@ class RecordingPage extends StatefulWidget {
   _RecordingPageState createState() => _RecordingPageState();
 }
 
-String text= "";
-class _RecordingPageState extends State<RecordingPage> {
-  get errorListener => null;
 
-  get statusListener => null;
+class _RecordingPageState extends State<RecordingPage> {
+
+
+  void errorListener(SpeechRecognitionError error) {
+    // print("Received error status: $error, listening: ${speech.isListening}");
+    setState(() {
+      lastError = "${error.errorMsg} - ${error.permanent}";
+    });
+  }
+
+  void statusListener(String status) {
+    // print(
+    // "Received listener status: $status, listening: ${speech.isListening}");
+    setState(() {
+      lastStatus = "$status";
+    });
+  }
 
   bool available = true;
   stt.SpeechToText speech = stt.SpeechToText();
 
   // text to be translated
 
-
+  String text= "";
   bool recordingDone = false;
 
   bool _hasSpeech = false;
@@ -32,7 +46,7 @@ class _RecordingPageState extends State<RecordingPage> {
   String lastWords = "";
   String lastError = "";
   String lastStatus = "";
-  String _currentLocaleId = "";
+  String _targetLocaleId = "";
   String _baseLocaleId = "";
   List<stt.LocaleName> _localeNames = [];
 
@@ -43,7 +57,7 @@ class _RecordingPageState extends State<RecordingPage> {
       _localeNames = await speech.locales();
 
       var systemLocale = await speech.systemLocale();
-      _currentLocaleId = systemLocale.localeId;
+      _targetLocaleId = systemLocale.localeId;
     }
 
     if (!mounted) return;
@@ -125,12 +139,15 @@ class _RecordingPageState extends State<RecordingPage> {
           recordingDone?
           Column(
               children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child:Text("Translate to:",textAlign: TextAlign.center,),),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     DropdownButton(
                       onChanged: (selectedVal) => _switchLang(selectedVal),
-                      value: _currentLocaleId,
+                      value: _targetLocaleId!=null?_targetLocaleId:null,
                       items: _localeNames
                           .map(
                             (localeName) => DropdownMenuItem(
@@ -145,32 +162,23 @@ class _RecordingPageState extends State<RecordingPage> {
           FlatButton(
             child: Text("Translate"),
             onPressed: (){
-              Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text)));
+              Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0],translateTo: _targetLocaleId.split("_")[0],)));
             },
           )]):SizedBox()
         ],
       ),
     );
-    // TODO: Recording icon button to start voice recording
-    // TODO: On recording finish show translate button
-    // TODO: select languages
-    // TODO: translate button navigates to translation page
   }
 
   @override
   void initState() {
     super.initState();
-//    setupRecording();
-    if(!_hasSpeech){
-    initSpeechState();
-    }
+//    if(!_hasSpeech){
+      initSpeechState();
+//    }
 
   }
 
-  void setupRecording() async{
-
-
-  }
   void resultListener(SpeechRecognitionResult result) {
 
     debugPrint(result.recognizedWords);
@@ -178,15 +186,15 @@ class _RecordingPageState extends State<RecordingPage> {
       recordingDone = true;
       text = result.recognizedWords;
     });
-
-
   }
+
   _switchLang(selectedVal) {
     setState(() {
-      _currentLocaleId = selectedVal;
+      _targetLocaleId = selectedVal;
     });
     print(selectedVal);
   }
+
   _baseLang(selectedVal) {
     setState(() {
       _baseLocaleId = selectedVal;

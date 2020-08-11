@@ -1,11 +1,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:translator/translator.dart';
 
 class TranslationPage extends StatefulWidget {
 
   final String text;
-  TranslationPage({Key key, this.text}) : super(key: key);
+  final String translateFrom;
+  final String translateTo;
+  TranslationPage({Key key, this.text,this.translateFrom,this.translateTo}) : super(key: key);
 
   @override
   _TranslationPageState createState() => _TranslationPageState();
@@ -14,6 +17,9 @@ class TranslationPage extends StatefulWidget {
 
 class _TranslationPageState extends State<TranslationPage> {
 
+  final translator = GoogleTranslator();
+
+  String translatedText = "";
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -24,8 +30,20 @@ class _TranslationPageState extends State<TranslationPage> {
      body: Column(
        children: <Widget>[
          Container(
+             alignment: Alignment.center,
+             child:Text("Original Text(${widget.translateFrom}")),
+         Container(
            alignment: Alignment.center,
-         child:Text(widget.text))
+         child:Text(widget.text)),
+         Divider(
+             color: Colors.black
+         ),
+         Container(
+             alignment: Alignment.center,
+             child:Text("Translated Text(${widget.translateTo})")),
+         Container(
+             alignment: Alignment.center,
+             child:Text(translatedText)),
        ],
      ),
    );
@@ -36,5 +54,14 @@ class _TranslationPageState extends State<TranslationPage> {
   @override
   void initState() {
     super.initState();
+    translateText();
+  }
+
+  Future<Null> translateText() async{
+    var translate = await translator.translate(widget.text, from: widget.translateFrom, to: widget.translateTo);
+    setState(() {
+      translatedText = translate.text;
+    });
+
   }
 }
