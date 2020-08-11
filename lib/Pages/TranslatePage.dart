@@ -34,16 +34,12 @@ class _TranslationPageState extends State<TranslationPage> {
 
 
   bool _hasSpeech = false;
-  double level = 0.0;
-  double minSoundLevel = 50000;
-  double maxSoundLevel = -50000;
-  String lastWords = "";
   String lastError = "";
   String lastStatus = "";
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    // Show the recorded message and the option of choosing the translate language
    return Scaffold(
      appBar: AppBar(
        title: Text("Translation"),
@@ -92,9 +88,6 @@ class _TranslationPageState extends State<TranslationPage> {
              ),
            ],
          ),
-//         Container(
-//             alignment: Alignment.center,
-//             child:Text("Translated Text($translateTo)")),
          Container(
              margin: EdgeInsets.all(20),
              padding: EdgeInsets.all(20),
@@ -103,18 +96,15 @@ class _TranslationPageState extends State<TranslationPage> {
                  border: Border.all(color: Colors.blueAccent)
              ),
              alignment: Alignment.center,
-             child:Text(translatedText)),
+             child:Text(translatedText.isNotEmpty?translatedText:"Please choose transalte language")),
        ],
      ),
    );
-    // TODO: Text of the text recorded
-    // TODO: Text of the translation of text
   }
 
   @override
   void initState() {
     super.initState();
-//    translateText();
     initSpeechState();
   }
 
@@ -170,7 +160,7 @@ class _TranslationPageState extends State<TranslationPage> {
     // print(
     // "Received listener status: $status, listening: ${speech.isListening}");
     setState(() {
-      lastStatus = "$status";
+//      lastStatus = "$status";
     });
   }
 

@@ -15,7 +15,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     readSharedPrefs();
-    // TODO: implement build
+    // List already translated texts
+    // TODO: show the original and translated language
     return Scaffold(
       appBar: AppBar(
         title: Text("Home Page"),
@@ -53,8 +54,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    // Read from shared prefs
     readSharedPrefs();
-    // TODO: Read from shared prefs
+
   }
 
   void readSharedPrefs() async{

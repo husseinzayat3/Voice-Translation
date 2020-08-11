@@ -41,10 +41,6 @@ class _RecordingPageState extends State<RecordingPage> {
   bool recordingDone = false;
 
   bool _hasSpeech = false;
-  double level = 0.0;
-  double minSoundLevel = 50000;
-  double maxSoundLevel = -50000;
-  String lastWords = "";
   String lastError = "";
   String lastStatus = "";
 
@@ -76,14 +72,12 @@ class _RecordingPageState extends State<RecordingPage> {
     return Scaffold(
       appBar: AppBar(title: Text("Record Page"),),
       body: ListView(
-//        crossAxisAlignment: CrossAxisAlignment.center,
-//        mainAxisSize: MainAxisSize.max,
-//        mainAxisAlignment: MainAxisAlignment.center,
       shrinkWrap: true,
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 50),
           child:Text("Select your language",textAlign: TextAlign.center,),),
+          // select the language to be translated
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
@@ -101,6 +95,7 @@ class _RecordingPageState extends State<RecordingPage> {
               ),
             ],
           ),
+          // Start recording message
           Container(
           alignment: Alignment.topCenter,
           width: 80,
@@ -162,10 +157,7 @@ class _RecordingPageState extends State<RecordingPage> {
   @override
   void initState() {
     super.initState();
-//    if(!_hasSpeech){
-      initSpeechState();
-//    }
-
+    initSpeechState();
   }
 
   void resultListener(SpeechRecognitionResult result) {
