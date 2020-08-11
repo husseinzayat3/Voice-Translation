@@ -1,14 +1,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:translator/translator.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+
 
 class TranslationPage extends StatefulWidget {
 
   final String text;
   final String translateFrom;
-  final String translateTo;
-  TranslationPage({Key key, this.text,this.translateFrom,this.translateTo}) : super(key: key);
+  TranslationPage({Key key, this.text,this.translateFrom}) : super(key: key);
 
   @override
   _TranslationPageState createState() => _TranslationPageState();
@@ -17,9 +19,27 @@ class TranslationPage extends StatefulWidget {
 
 class _TranslationPageState extends State<TranslationPage> {
 
+
+  stt.SpeechToText speech = stt.SpeechToText();
+
   final translator = GoogleTranslator();
 
+  String _targetLocaleId = "";
+
   String translatedText = "";
+
+  String translateTo="";
+  List<stt.LocaleName> _localeNames = [];
+
+
+  bool _hasSpeech = false;
+  double level = 0.0;
+  double minSoundLevel = 50000;
+  double maxSoundLevel = -50000;
+  String lastWords = "";
+  String lastError = "";
+  String lastStatus = "";
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -28,20 +48,59 @@ class _TranslationPageState extends State<TranslationPage> {
        title: Text("Translation"),
      ),
      body: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       mainAxisSize: MainAxisSize.max,
+       crossAxisAlignment: CrossAxisAlignment.center,
        children: <Widget>[
+         SizedBox(height: 40,),
          Container(
              alignment: Alignment.center,
-             child:Text("Original Text(${widget.translateFrom}")),
+             child:Text("Original Text(${widget.translateFrom})")),
          Container(
+           margin: EdgeInsets.all(20),
+           padding: EdgeInsets.all(20),
+           decoration: BoxDecoration(
+             borderRadius: BorderRadius.all(Radius.circular(50)),
+             border: Border.all(color: Colors.blueAccent)
+           ),
            alignment: Alignment.center,
          child:Text(widget.text)),
          Divider(
              color: Colors.black
          ),
+         Padding(
+           padding: EdgeInsets.only(top: 20),
+           child:Text("Translate to:",textAlign: TextAlign.center,),),
+         Row(
+           mainAxisAlignment: MainAxisAlignment.spaceAround,
+           children: <Widget>[
+             DropdownButton(
+               onChanged: (selectedVal){
+                 _switchLang(selectedVal);
+                 translateText(selectedVal.split("_")[0]);
+                 },
+               value: _targetLocaleId,
+               items: _localeNames
+                   .map(
+                     (localeName) => DropdownMenuItem(
+                   value: localeName.localeId,
+                   child: Text(localeName.name),
+                 ),
+               )
+                   .toList(),
+             ),
+           ],
+         ),
+//         Container(
+//             alignment: Alignment.center,
+//             child:Text("Translated Text($translateTo)")),
          Container(
-             alignment: Alignment.center,
-             child:Text("Translated Text(${widget.translateTo})")),
-         Container(
+             margin: EdgeInsets.all(20),
+             padding: EdgeInsets.all(20),
+             decoration: BoxDecoration(
+                 borderRadius: BorderRadius.all(Radius.circular(50)),
+                 border: Border.all(color: Colors.blueAccent)
+             ),
              alignment: Alignment.center,
              child:Text(translatedText)),
        ],
@@ -54,14 +113,52 @@ class _TranslationPageState extends State<TranslationPage> {
   @override
   void initState() {
     super.initState();
-    translateText();
+//    translateText();
+    initSpeechState();
   }
 
-  Future<Null> translateText() async{
-    var translate = await translator.translate(widget.text, from: widget.translateFrom, to: widget.translateTo);
+  Future<Null> translateText(targetId) async{
+    var translate = await translator.translate(widget.text, from: widget.translateFrom, to: targetId);
     setState(() {
       translatedText = translate.text;
     });
 
   }
+  _switchLang(selectedVal) {
+    setState(() {
+      _targetLocaleId = selectedVal;
+    });
+    print(selectedVal);
+  }
+  Future<void> initSpeechState() async {
+    bool hasSpeech = await speech.initialize(
+        onError: errorListener, onStatus: statusListener);
+    if (hasSpeech) {
+      _localeNames = await speech.locales();
+
+      var systemLocale = await speech.systemLocale();
+      _targetLocaleId = systemLocale.localeId;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _hasSpeech = hasSpeech;
+    });
+  }
+  void errorListener(SpeechRecognitionError error) {
+    // print("Received error status: $error, listening: ${speech.isListening}");
+    setState(() {
+      lastError = "${error.errorMsg} - ${error.permanent}";
+    });
+  }
+
+  void statusListener(String status) {
+    // print(
+    // "Received listener status: $status, listening: ${speech.isListening}");
+    setState(() {
+      lastStatus = "$status";
+    });
+  }
+
 }

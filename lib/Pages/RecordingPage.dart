@@ -46,7 +46,7 @@ class _RecordingPageState extends State<RecordingPage> {
   String lastWords = "";
   String lastError = "";
   String lastStatus = "";
-  String _targetLocaleId = "";
+
   String _baseLocaleId = "";
   List<stt.LocaleName> _localeNames = [];
 
@@ -57,7 +57,7 @@ class _RecordingPageState extends State<RecordingPage> {
       _localeNames = await speech.locales();
 
       var systemLocale = await speech.systemLocale();
-      _targetLocaleId = systemLocale.localeId;
+      _baseLocaleId = systemLocale.localeId;
     }
 
     if (!mounted) return;
@@ -81,7 +81,7 @@ class _RecordingPageState extends State<RecordingPage> {
       shrinkWrap: true,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(top: 50),
           child:Text("Select your language",textAlign: TextAlign.center,),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -102,15 +102,16 @@ class _RecordingPageState extends State<RecordingPage> {
           ),
           Container(
           alignment: Alignment.topCenter,
-          width: 50,
-          height: 50,
+          width: 80,
+          height: 80,
           margin: EdgeInsets.only(top: 50),
           child:FlatButton(
+            padding: EdgeInsets.all(10),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18.0),
-//                side: BorderSide(color: Colors.red)
+                side: BorderSide(color: Colors.blueAccent)
             ),
-           child: Image.asset("assets/recording.png"),
+           child: Image.asset("assets/recording.png",color: Colors.blueAccent),
             onPressed: () async {
               available = await speech.initialize(
                   onStatus: statusListener, onError: errorListener,debugLogging: true);
@@ -121,17 +122,18 @@ class _RecordingPageState extends State<RecordingPage> {
               }
             },
           )),
-      Container(
-        alignment: Alignment.topCenter,
-        width: 50,
-        height: 50,
-        margin: EdgeInsets.only(top: 50),
-        child:FlatButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-//                side: BorderSide(color: Colors.red)
-          ),
-          child: Image.asset("assets/stop-recording.png"),
+          Container(
+              alignment: Alignment.topCenter,
+              width: 80,
+              height: 80,
+              margin: EdgeInsets.only(top: 50),
+              child:FlatButton(
+                padding: EdgeInsets.all(10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: BorderSide(color: Colors.blueAccent)
+                ),
+              child:  Image.asset("assets/stop-recording.png",color: Colors.blueAccent,),
           onPressed: () async {
               speech.stop();
             },
@@ -139,32 +141,18 @@ class _RecordingPageState extends State<RecordingPage> {
           recordingDone?
           Column(
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child:Text("Translate to:",textAlign: TextAlign.center,),),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    DropdownButton(
-                      onChanged: (selectedVal) => _switchLang(selectedVal),
-                      value: _targetLocaleId!=null?_targetLocaleId:null,
-                      items: _localeNames
-                          .map(
-                            (localeName) => DropdownMenuItem(
-                          value: localeName.localeId,
-                          child: Text(localeName.name),
-                        ),
-                      )
-                          .toList(),
+                Container(
+                    margin: EdgeInsets.only(top:40),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        border: Border.all(color: Colors.blueAccent)
                     ),
-                  ],
-                ),
-          FlatButton(
-            child: Text("Translate"),
+            child:  FlatButton(
+            child: Text("Translate",style: TextStyle(fontSize: 20),),
             onPressed: (){
-              Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0],translateTo: _targetLocaleId.split("_")[0],)));
+              Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0])));
             },
-          )]):SizedBox()
+          ))]):SizedBox()
         ],
       ),
     );
@@ -188,12 +176,7 @@ class _RecordingPageState extends State<RecordingPage> {
     });
   }
 
-  _switchLang(selectedVal) {
-    setState(() {
-      _targetLocaleId = selectedVal;
-    });
-    print(selectedVal);
-  }
+
 
   _baseLang(selectedVal) {
     setState(() {
