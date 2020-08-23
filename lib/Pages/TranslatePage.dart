@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:translator/translator.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:voice_translator/Phrase.dart';
+import 'package:voice_translator/dbHelper.dart';
 
 
 class TranslationPage extends StatefulWidget {
@@ -110,18 +112,22 @@ class _TranslationPageState extends State<TranslationPage> {
 
   Future<Null> translateText(targetId) async{
     var translate = await translator.translate(widget.text, from: widget.translateFrom, to: targetId);
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'audio';
-    List<String> audio = prefs.getStringList(key);
-    if(audio!=null){
-      audio.add("${widget.text}_${translate.text}");
-    prefs.setStringList(key, audio);
-    }else{
-      List<String> list = [];
-      list.add("${widget.text}_${translate.text}");
-      prefs.setStringList(key, list);
-    }
+//    final prefs = await SharedPreferences.getInstance();
+//    final key = 'audio';
+//    List<String> audio = prefs.getStringList(key);
+//    if(audio!=null){
+//      audio.add("${widget.text}_${translate.text}");
+//    prefs.setStringList(key, audio);
+//    }else{
+//      List<String> list = [];
+//      list.add("${widget.text}_${translate.text}");
+//      prefs.setStringList(key, list);
+//    }
 
+
+    int id = await PhraseDatabaseProvider.db.getId();
+    Phrase phrase = new Phrase(id,widget.text, widget.translateFrom, translate.text, targetId, DateTime.now().toString());
+    PhraseDatabaseProvider.db.addPhraseToDatabase(phrase);
     setState(() {
       translatedText = translate.text;
     });
