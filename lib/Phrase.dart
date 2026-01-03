@@ -35,12 +35,12 @@ class Phrase{
 
 
   Phrase.fromMap(Map<String, dynamic> map) {
-    id = map[columnId];
-    inputText = map[columnInputText];
-    inputLang = map[columnInputLang];
-    outputText = map[columnOutputText];
-    outputLang = map[columnOutputLang];
-    date = map[columnDate];
+    id = map[columnId] ?? 0;
+    inputText = map[columnInputText] ?? '';
+    inputLang = map[columnInputLang] ?? '';
+    outputText = map[columnOutputText] ?? '';
+    outputLang = map[columnOutputLang] ?? '';
+    date = map[columnDate] ?? '';
   }
 
 }
