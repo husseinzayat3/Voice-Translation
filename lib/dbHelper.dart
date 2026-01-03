@@ -20,7 +20,12 @@ class PhraseDatabaseProvider {
 
   Future<Database> get database async {
     if (_database != null) return _database;
-    _database = await getDatabaseInstance();
+    try {
+      _database = await getDatabaseInstance();
+    } catch (e) {
+      print('Error opening database: $e');
+      return null;
+    }
     return _database;
   }
 
@@ -42,33 +47,55 @@ class PhraseDatabaseProvider {
 
   addPhraseToDatabase(Phrase phrase) async {
     final db = await database;
-    var raw = await db.insert(
-      "Phrase",
-      phrase.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      var raw = await db.insert(
+        "Phrase",
+        phrase.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      return raw;
+    } catch (e) {
+      print('Error adding phrase: $e');
+      return null;
+    }
     return raw;
   }
 
   updatePhrase(Phrase phrase) async {
     final db = await database;
-    var response = await db.update("Phrase", phrase.toMap(),
-        where: "_id = ?", whereArgs: [phrase.id]);
+    try {
+      var response = await db.update("Phrase", phrase.toMap(),
+          where: "_id = ?", whereArgs: [phrase.id]);
+      return response;
+    } catch (e) {
+      print('Error updating phrase: $e');
+      return null;
+    }
     return response;
   }
 
   Future<Phrase> getPhraseWithId(int id) async {
     final db = await database;
-    var response = await db.query("Phrase", where: "_id = ?", whereArgs: [id]);
-    return response.isNotEmpty ? Phrase.fromMap(response.first) : null;
+    try {
+      var response = await db.query("Phrase", where: "_id = ?", whereArgs: [id]);
+      return response.isNotEmpty ? Phrase.fromMap(response.first) : null;
+    } catch (e) {
+      print('Error fetching phrase with id $id: $e');
+      return null;
+    }
   }
 
   Future<List<Phrase>> getAllPhrases() async {
     final db = await database;
-    var response = await db.query("Phrase");
-    print(response.toString());
-    List<Phrase> list = response.map((c) => Phrase.fromMap(c)).toList();
-    return list;
+    try {
+      var response = await db.query("Phrase");
+      print(response.toString());
+      List<Phrase> list = response.map((c) => Phrase.fromMap(c)).toList();
+      return list;
+    } catch (e) {
+      print('Error fetching all phrases: $e');
+      return [];
+    }
   }
   Future<int> getId() async {
     final db = await database;
@@ -88,11 +115,20 @@ class PhraseDatabaseProvider {
 
   deletePhraseWithId(int id) async {
     final db = await database;
-    return db.delete("Phrase", where: "_id = ?", whereArgs: [id]);
+    try {
+      return db.delete("Phrase", where: "_id = ?", whereArgs: [id]);
+    } catch (e) {
+      print('Error deleting phrase with id $id: $e');
+      return null;
+    }
   }
 
   deleteAllPhrases() async {
     final db = await database;
-    db.delete("Phrase");
+    try {
+      db.delete("Phrase");
+    } catch (e) {
+      print('Error deleting all phrases: $e');
+    }
   }
 }
