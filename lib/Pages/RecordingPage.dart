@@ -82,7 +82,7 @@ class _RecordingPageState extends State<RecordingPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               DropdownButton(
-                onChanged: (selectedVal) => _baseLang(selectedVal),
+                onChanged: (selectedVal) => updateBaseLanguage(selectedVal),
                 value: _baseLocaleId,
                 items: _localeNames
                     .map(
@@ -171,7 +171,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
 
 
-  _baseLang(selectedVal) {
+  updateBaseLanguage(selectedVal) {
     setState(() {
       _baseLocaleId = selectedVal;
     });
