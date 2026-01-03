@@ -114,7 +114,7 @@ class _RecordingPageState extends State<RecordingPage> {
               if (available) {
                 speech.listen(onResult: resultListener,localeId: _baseLocaleId);
               } else {
-                print("The user has denied the use of speech recognition.");
+                // print("The user has denied the use of speech recognition.");
               }
             },
           )),
@@ -175,6 +175,6 @@ class _RecordingPageState extends State<RecordingPage> {
     setState(() {
       _baseLocaleId = selectedVal;
     });
-    print(selectedVal);
+    // print(selectedVal);
   }
 }
