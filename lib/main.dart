@@ -51,4 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return new HomePage();
   }
 
+  void someMethod() {
+    if (mounted) {
+      setState(() {
+        // Your state update logic here
+      });
+    }
+  }
+
 }
