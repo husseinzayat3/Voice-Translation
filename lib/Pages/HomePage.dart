@@ -29,8 +29,10 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
                 await PhraseDatabaseProvider.db.deleteAllPhrases();
-                setState(() {
-                });
+                if (mounted) {
+                  setState(() {
+                  });
+                }
               },
             )
           ],
@@ -70,7 +72,9 @@ class _HomePageState extends State<HomePage> {
                                     onPressed: () async {
                                       await PhraseDatabaseProvider.db
                                           .deletePhraseWithId(list[index].id);
-                                      setState(() {});
+                                      if (mounted) {
+                                        setState(() {});
+                                      }
                                     },
                                   ),
                                 ),
@@ -94,9 +98,11 @@ class _HomePageState extends State<HomePage> {
 
   void readPhrasesDb() async {
     List<Phrase> phrases = await PhraseDatabaseProvider.db.getAllPhrases();
-    setState(() {
-      list = phrases;
-    });
+    if (mounted) {
+      setState(() {
+        list = phrases;
+      });
+    }
   }
 
   void readSharedPrefs() async {
