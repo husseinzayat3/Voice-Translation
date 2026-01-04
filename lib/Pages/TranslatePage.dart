@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts.dart' if (dart.library.html) 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:translator/translator.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
