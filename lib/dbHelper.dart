@@ -6,6 +6,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:logging/logging.dart';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +14,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:voice_translator/Phrase.dart';
 
 class PhraseDatabaseProvider {
+  final Logger _logger = Logger('PhraseDatabaseProvider');
   PhraseDatabaseProvider._();
 
   static final PhraseDatabaseProvider db = PhraseDatabaseProvider._();
@@ -23,7 +25,7 @@ class PhraseDatabaseProvider {
     try {
       _database = await getDatabaseInstance();
     } catch (e) {
-      print('Error opening database: $e');
+      _logger.severe('Error opening database', e);
       return null;
     }
     return _database;
@@ -55,7 +57,7 @@ class PhraseDatabaseProvider {
       );
       return raw;
     } catch (e) {
-      print('Error adding phrase: $e');
+      _logger.severe('Error adding phrase', e);
       return null;
     }
     return raw;
@@ -68,7 +70,7 @@ class PhraseDatabaseProvider {
           where: "_id = ?", whereArgs: [phrase.id]);
       return response;
     } catch (e) {
-      print('Error updating phrase: $e');
+      _logger.severe('Error updating phrase', e);
       return null;
     }
     return response;
@@ -80,7 +82,7 @@ class PhraseDatabaseProvider {
       var response = await db.query("Phrase", where: "_id = ?", whereArgs: [id]);
       return response.isNotEmpty ? Phrase.fromMap(response.first) : null;
     } catch (e) {
-      print('Error fetching phrase with id $id: $e');
+      _logger.severe('Error fetching phrase with id $id', e);
       return null;
     }
   }
@@ -89,11 +91,11 @@ class PhraseDatabaseProvider {
     final db = await database;
     try {
       var response = await db.query("Phrase");
-      print(response.toString());
+      _logger.info('Fetched all phrases: ${response.toString()}');
       List<Phrase> list = response.map((c) => Phrase.fromMap(c)).toList();
       return list;
     } catch (e) {
-      print('Error fetching all phrases: $e');
+      _logger.severe('Error fetching all phrases', e);
       return [];
     }
   }
@@ -118,7 +120,7 @@ class PhraseDatabaseProvider {
     try {
       return db.delete("Phrase", where: "_id = ?", whereArgs: [id]);
     } catch (e) {
-      print('Error deleting phrase with id $id: $e');
+      _logger.severe('Error deleting phrase with id $id', e);
       return null;
     }
   }
@@ -128,7 +130,7 @@ class PhraseDatabaseProvider {
     try {
       db.delete("Phrase");
     } catch (e) {
-      print('Error deleting all phrases: $e');
+      _logger.severe('Error deleting all phrases', e);
     }
   }
 }
