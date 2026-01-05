@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
                 await widget.dbProvider.deleteAllPhrases();
-                if (mounted && list.isNotEmpty) {
+                if (mounted) {
                   setState(() {
                     list.clear();
                   });
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () async {
                             await widget.dbProvider
                                 .deletePhraseWithId(phrase.id);
-                            if (mounted && list.isNotEmpty) {
+                            if (mounted) {
                               setState(() {
                                 list.removeWhere((item) => item.id == phrase.id);
                               });
