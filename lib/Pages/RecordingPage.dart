@@ -122,7 +122,7 @@ class _RecordingPageState extends State<RecordingPage> {
                 value: _baseLocaleId,
                 items: _localeNames
                     .map(
-                      (localeName) => DropdownMenuItem(
+                      (localeName) => const DropdownMenuItem(
                     value: localeName.localeId,
                     child: Text(localeName.name),
                   ),
