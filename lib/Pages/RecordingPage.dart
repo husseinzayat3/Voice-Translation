@@ -112,7 +112,7 @@ class _RecordingPageState extends State<RecordingPage> {
       body: ListView(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 50),
+            padding: const EdgeInsets.only(top: 50),
           child: _buildLanguageSelectionText(),),
           // select the language to be translated
           Row(
@@ -137,9 +137,9 @@ class _RecordingPageState extends State<RecordingPage> {
           alignment: Alignment.topCenter,
           width: 80,
           height: 80,
-          margin: EdgeInsets.only(top: 50),
+          margin: const EdgeInsets.only(top: 50),
           child:FlatButton(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18.0),
                 side: BorderSide(color: Colors.blueAccent)
@@ -184,7 +184,7 @@ class _RecordingPageState extends State<RecordingPage> {
           Column(
               children: <Widget>[
                 Container(
-                    margin: EdgeInsets.only(top:40),
+                    margin: const EdgeInsets.only(top:40),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                         border: Border.all(color: Colors.blueAccent)
