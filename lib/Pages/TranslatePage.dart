@@ -187,9 +187,11 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   _switchLang(selectedVal) {
-    setState(() {
-      _targetLocaleId = selectedVal;
-    });
+    if (mounted) {
+      setState(() {
+        _targetLocaleId = selectedVal;
+      });
+    }
     print(selectedVal);
   }
 
@@ -204,9 +206,11 @@ class _TranslationPageState extends State<TranslationPage> {
     }
     if (!mounted) return;
 
-    setState(() {
-      _hasSpeech = hasSpeech;
-    });
+    if (mounted) {
+      setState(() {
+        _hasSpeech = hasSpeech;
+      });
+    }
   }
 
   void errorListener(SpeechRecognitionError error) {
@@ -239,7 +243,7 @@ class _TranslationPageState extends State<TranslationPage> {
     if (_newVoiceText != null) {
       if (_newVoiceText.isNotEmpty) {
         var result = await flutterTts.speak(_newVoiceText);
-        if (result == 1) setState(() => ttsState = TtsState.playing);
+        if (result == 1 && mounted) setState(() => ttsState = TtsState.playing);
       }
     }
   }
@@ -247,7 +251,7 @@ class _TranslationPageState extends State<TranslationPage> {
   Future _stop() async {
     if (flutterTts == null) return;
     var result = await flutterTts.stop();
-    if (result == 1) setState(() => ttsState = TtsState.stopped);
+    if (result == 1 && mounted) setState(() => ttsState = TtsState.stopped);
   }
 
   Future _getEngines() async {
@@ -273,39 +277,49 @@ class _TranslationPageState extends State<TranslationPage> {
 
   void _setupTtsHandlers() {
     flutterTts.setStartHandler(() {
-      setState(() {
-        print("Playing");
-        ttsState = TtsState.playing;
-      });
+      if (mounted) {
+        setState(() {
+          print("Playing");
+          ttsState = TtsState.playing;
+        });
+      }
     });
 
     flutterTts.setCompletionHandler(() {
-      setState(() {
-        print("Complete");
-        ttsState = TtsState.stopped;
-      });
+      if (mounted) {
+        setState(() {
+          print("Complete");
+          ttsState = TtsState.stopped;
+        });
+      }
     });
 
     flutterTts.setCancelHandler(() {
-      setState(() {
-        print("Cancel");
-        ttsState = TtsState.stopped;
-      });
+      if (mounted) {
+        setState(() {
+          print("Cancel");
+          ttsState = TtsState.stopped;
+        });
+      }
     });
 
     if (kIsWeb || Platform.isIOS) {
       flutterTts.setPauseHandler(() {
-        setState(() {
-          print("Paused");
-          ttsState = TtsState.paused;
-        });
+        if (mounted) {
+          setState(() {
+            print("Paused");
+            ttsState = TtsState.paused;
+          });
+        }
       });
 
       flutterTts.setContinueHandler(() {
-        setState(() {
-          print("Continued");
-          ttsState = TtsState.continued;
-        });
+        if (mounted) {
+          setState(() {
+            print("Continued");
+            ttsState = TtsState.continued;
+          });
+        }
       });
     }
 
