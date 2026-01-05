@@ -105,6 +105,10 @@ class _TranslationPageState extends State<TranslationPage> {
                   if (selectedVal != null && selectedVal.isNotEmpty) {
                     _switchLang(selectedVal);
                     translateText(selectedVal.split("_")[0]);
+                  } else {
+                    setState(() {
+                      translatedText = "Please select a valid language.";
+                    });
                   }
                 },
                 value: _targetLocaleId,
@@ -260,9 +264,7 @@ class _TranslationPageState extends State<TranslationPage> {
     _getLanguages();
 
     if (!kIsWeb) {
-      if (Platform.isAndroid) {
-        _getEngines();
-      }
+      _getEngines();
     }
 
     flutterTts.setStartHandler(() {
