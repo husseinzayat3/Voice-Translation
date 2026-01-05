@@ -177,6 +177,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
 
   updateBaseLanguage(selectedVal) {
+    if (selectedVal == null) return;
     setState(() {
       _baseLocaleId = selectedVal;
     });
