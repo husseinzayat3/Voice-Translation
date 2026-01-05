@@ -51,7 +51,7 @@ class _TranslationPageState extends State<TranslationPage> {
 
 
   // text translator
-  GoogleTranslator get translator => widget.translator;
+  // GoogleTranslator is injected via the constructor, no need to instantiate it here.
 
   String _targetLocaleId = "";
 
@@ -262,7 +262,7 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   initTts() {
-    flutterTts = FlutterTts();
+    // flutterTts is injected via the constructor, no need to instantiate it here.
 
     _getLanguages();
 
