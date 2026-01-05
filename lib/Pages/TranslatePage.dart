@@ -1,4 +1,5 @@
 String _newVoiceText = '';
+String language = 'en';
 
 void _setupServiceLocator({
   required stt.SpeechToText Function() speechToTextFactory,
