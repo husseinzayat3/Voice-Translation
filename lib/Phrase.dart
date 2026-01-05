@@ -7,7 +7,8 @@ final String columnOutputLang = 'outputLang';
 final String columnDate = 'date';
 
 
-class Phrase{
+/// Represents a translation entry with input and output text and languages.
+class TranslationEntry{
   int id;
   String inputText;
   String inputLang;
