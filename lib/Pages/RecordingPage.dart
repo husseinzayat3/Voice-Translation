@@ -106,8 +106,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Record Page"),),
-      body: SingleChildScrollView(
-      child: Column(
+      body: ListView(
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 50),
