@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         body: ListView(
           children: <Widget>[
             Center(
-              child: FlatButton(
+              child: TextButton(
                 child: Text("Record"),
                 onPressed: () {
                   Navigator.push(
