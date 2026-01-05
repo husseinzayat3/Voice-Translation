@@ -14,8 +14,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class TranslationPage extends StatefulWidget {
   final String text;
   final String translateFrom;
+  final stt.SpeechToText speechToText;
+  final FlutterTts flutterTts;
+  final GoogleTranslator translator;
 
-  TranslationPage({Key key, this.text, this.translateFrom}) : super(key: key);
+  TranslationPage({Key key, this.text, this.translateFrom, @required this.speechToText, @required this.flutterTts, @required this.translator}) : super(key: key);
 
   @override
   _TranslationPageState createState() => _TranslationPageState();
@@ -24,10 +27,10 @@ class TranslationPage extends StatefulWidget {
 class _TranslationPageState extends State<TranslationPage> {
 
   // speech to text
-  stt.SpeechToText speech = stt.SpeechToText();
+  stt.SpeechToText get speech => widget.speechToText;
 
   // text to speech
-  FlutterTts flutterTts;
+  FlutterTts get flutterTts => widget.flutterTts;
   dynamic languages;
   String language;
   double volume = 0.5;
@@ -48,11 +51,11 @@ class _TranslationPageState extends State<TranslationPage> {
 
 
   // text translator
-  final translator = GoogleTranslator();
+  GoogleTranslator get translator => widget.translator;
 
   String _targetLocaleId = "";
 
-  String translatedText = "";
+  ValueNotifier<String> translatedText = ValueNotifier("");
 
   String translateTo = "";
   List<stt.LocaleName> _localeNames = [];
@@ -61,7 +64,7 @@ class _TranslationPageState extends State<TranslationPage> {
   String lastError = "";
   String lastStatus = "";
 
-  bool isPressed = false;
+  ValueNotifier<bool> isPressed = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +108,8 @@ class _TranslationPageState extends State<TranslationPage> {
                   if (selectedVal != null && selectedVal.isNotEmpty) {
                     _switchLang(selectedVal);
                     translateText(selectedVal.split("_")[0]);
+                  } else {
+                    translatedText.value = "Please select a valid language.";
                   }
                 },
                 value: _targetLocaleId,
@@ -127,7 +132,10 @@ class _TranslationPageState extends State<TranslationPage> {
                   border: Border.all(color: Colors.blueAccent)),
               alignment: Alignment.center,
               child: ListTile(
-                trailing: IconButton(icon: Icon(isPressed?Icons.stop:Icons.record_voice_over),
+                trailing: ValueListenableBuilder(
+                  valueListenable: isPressed,
+                  builder: (context, value, child) {
+                    return IconButton(icon: Icon(value ? Icons.stop : Icons.record_voice_over),
                 onPressed: () async{
 
                  if(isPressed){
@@ -136,13 +144,14 @@ class _TranslationPageState extends State<TranslationPage> {
                    _stop();
                  }
 
-                 setState(() {
-                   isPressed=!isPressed;
-                 });
+                 isPressed.value = !isPressed.value;
                 },),
-                  title: Text(translatedText.isNotEmpty
-                      ? translatedText
-                      : "Please choose transalte language"))),
+                  title: ValueListenableBuilder(
+                  valueListenable: translatedText,
+                  builder: (context, value, child) {
+                    return Text(value.isNotEmpty ? value : "Please choose a translate language");
+                  },
+                ))),
         ],
       ),
     );
@@ -158,31 +167,21 @@ class _TranslationPageState extends State<TranslationPage> {
   Future<Null> translateText(targetId) async {
     var translate = await translator.translate(widget.text,
         from: widget.translateFrom, to: targetId);
-//    final prefs = await SharedPreferences.getInstance();
-//    final key = 'audio';
-//    List<String> audio = prefs.getStringList(key);
-//    if(audio!=null){
-//      audio.add("${widget.text}_${translate.text}");
-//    prefs.setStringList(key, audio);
-//    }else{
-//      List<String> list = [];
-//      list.add("${widget.text}_${translate.text}");
-//      prefs.setStringList(key, list);
-//    }
+
 
     int id = await PhraseDatabaseProvider.db.getId();
     Phrase phrase = new Phrase(id, widget.text, widget.translateFrom,
         translate.text, targetId, DateTime.now().toString());
     PhraseDatabaseProvider.db.addPhraseToDatabase(phrase);
-    setState(() {
-      translatedText = translate.text;
-    });
+    translatedText.value = translate.text;
   }
 
   _switchLang(selectedVal) {
-    setState(() {
-      _targetLocaleId = selectedVal;
-    });
+    if (mounted) {
+      setState(() {
+        _targetLocaleId = selectedVal;
+      });
+    }
     print(selectedVal);
   }
 
@@ -197,9 +196,11 @@ class _TranslationPageState extends State<TranslationPage> {
     }
     if (!mounted) return;
 
-    setState(() {
-      _hasSpeech = hasSpeech;
-    });
+    if (mounted) {
+      setState(() {
+        _hasSpeech = hasSpeech;
+      });
+    }
   }
 
   void errorListener(SpeechRecognitionError error) {
@@ -224,25 +225,23 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   Future _speak() async {
-    if (flutterTts != null) {
-      await flutterTts.setVolume(volume);
-      await flutterTts.setSpeechRate(rate);
-      await flutterTts.setPitch(pitch);
+    if (flutterTts == null) return;
+    await flutterTts.setVolume(volume);
+    await flutterTts.setSpeechRate(rate);
+    await flutterTts.setPitch(pitch);
 
-      if (_newVoiceText != null) {
-        if (_newVoiceText.isNotEmpty) {
-          var result = await flutterTts.speak(_newVoiceText);
-          if (result == 1) setState(() => ttsState = TtsState.playing);
-        }
+    if (_newVoiceText != null) {
+      if (_newVoiceText.isNotEmpty) {
+        var result = await flutterTts.speak(_newVoiceText);
+        if (result == 1 && mounted) setState(() => ttsState = TtsState.playing);
       }
     }
   }
 
   Future _stop() async {
-    if (flutterTts != null) {
-      var result = await flutterTts.stop();
-      if (result == 1) setState(() => ttsState = TtsState.stopped);
-    }
+    if (flutterTts == null) return;
+    var result = await flutterTts.stop();
+    if (result == 1 && mounted) setState(() => ttsState = TtsState.stopped);
   }
 
   Future _getEngines() async {
@@ -260,45 +259,57 @@ class _TranslationPageState extends State<TranslationPage> {
     _getLanguages();
 
     if (!kIsWeb) {
-      if (Platform.isAndroid) {
-        _getEngines();
-      }
+      _getEngines();
     }
 
+    _setupTtsHandlers();
+  }
+
+  void _setupTtsHandlers() {
     flutterTts.setStartHandler(() {
-      setState(() {
-        print("Playing");
-        ttsState = TtsState.playing;
-      });
+      if (mounted) {
+        setState(() {
+          print("Playing");
+          ttsState = TtsState.playing;
+        });
+      }
     });
 
     flutterTts.setCompletionHandler(() {
-      setState(() {
-        print("Complete");
-        ttsState = TtsState.stopped;
-      });
+      if (mounted) {
+        setState(() {
+          print("Complete");
+          ttsState = TtsState.stopped;
+        });
+      }
     });
 
     flutterTts.setCancelHandler(() {
-      setState(() {
-        print("Cancel");
-        ttsState = TtsState.stopped;
-      });
+      if (mounted) {
+        setState(() {
+          print("Cancel");
+          ttsState = TtsState.stopped;
+        });
+      }
     });
 
     if (kIsWeb || Platform.isIOS) {
       flutterTts.setPauseHandler(() {
-        setState(() {
-          print("Paused");
-          ttsState = TtsState.paused;
-        });
+        if (mounted) {
+          setState(() {
+            print("Paused");
+            ttsState = TtsState.paused;
+          });
+        }
       });
 
       flutterTts.setContinueHandler(() {
-        setState(() {
-          print("Continued");
-          ttsState = TtsState.continued;
-        });
+        if (mounted) {
+          setState(() {
+            print("Continued");
+            ttsState = TtsState.continued;
+          });
+        }
       });
     }
 

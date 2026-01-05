@@ -7,7 +7,10 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:voice_translator/Pages/TranslatePage.dart';
 
 class RecordingPage extends StatefulWidget {
-  RecordingPage({Key key}) : super(key: key);
+  final FlutterSecureStorage secureStorage;
+  final stt.SpeechToText speechToText;
+
+  RecordingPage({Key key, @required this.secureStorage, @required this.speechToText}) : super(key: key);
 
   @override
   _RecordingPageState createState() => _RecordingPageState();
@@ -15,11 +18,12 @@ class RecordingPage extends StatefulWidget {
 
 
 class _RecordingPageState extends State<RecordingPage> {
-  final _secureStorage = FlutterSecureStorage();
+  FlutterSecureStorage get _secureStorage => widget.secureStorage;
 
 
   void errorListener(SpeechRecognitionError error) {
     // print("Received error status: $error, listening: ${speech.isListening}");
+    if (!mounted) return;
     setState(() {
       lastError = "${error.errorMsg} - ${error.permanent}";
     });
@@ -28,13 +32,14 @@ class _RecordingPageState extends State<RecordingPage> {
   void statusListener(String status) {
     // print(
     // "Received listener status: $status, listening: ${speech.isListening}");
+    if (!mounted) return;
     setState(() {
       lastStatus = "$status";
     });
   }
 
   bool available = true;
-  stt.SpeechToText speech = stt.SpeechToText();
+  stt.SpeechToText get speech => widget.speechToText;
 
   // text to be translated
 
@@ -69,7 +74,6 @@ class _RecordingPageState extends State<RecordingPage> {
   @override
   Widget build(BuildContext context) {
 
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(title: Text("Record Page"),),
       body: ListView(
@@ -110,12 +114,8 @@ class _RecordingPageState extends State<RecordingPage> {
             ),
            child: Image.asset("assets/recording.png",color: Colors.blueAccent),
             onPressed: () async {
-              available = await speech.initialize(
-                  onStatus: statusListener, onError: errorListener,debugLogging: true);
-              if (available) {
-                speech.listen(onResult: resultListener,localeId: _baseLocaleId);
-              } else {
-                // print("The user has denied the use of speech recognition.");
+              if (_hasSpeech) {
+                speech.listen(onResult: resultListener, localeId: _baseLocaleId);
               }
             },
           )),
@@ -147,7 +147,9 @@ class _RecordingPageState extends State<RecordingPage> {
             child:  FlatButton(
             child: Text("Translate",style: TextStyle(fontSize: 20),),
             onPressed: (){
-              Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0])));
+              if (mounted) {
+                Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0])));
+              }
             },
           ))]):SizedBox()
         ],
@@ -164,6 +166,7 @@ class _RecordingPageState extends State<RecordingPage> {
   void resultListener(SpeechRecognitionResult result) {
 
     debugPrint(result.recognizedWords);
+    if (!mounted) return;
     setState(() {
       recordingDone = true;
       text = result.recognizedWords;
@@ -173,9 +176,9 @@ class _RecordingPageState extends State<RecordingPage> {
 
 
   updateBaseLanguage(selectedVal) {
+    if (selectedVal == null) return;
     setState(() {
       _baseLocaleId = selectedVal;
     });
-    // print(selectedVal);
   }
 }

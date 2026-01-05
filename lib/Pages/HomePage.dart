@@ -6,7 +6,10 @@ import 'package:voice_translator/Phrase.dart';
 import 'package:voice_translator/dbHelper.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final PhraseDatabaseProvider dbProvider;
+  final SharedPreferences sharedPreferences;
+
+  HomePage({Key key, @required this.dbProvider, @required this.sharedPreferences}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -17,10 +20,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-//    readSharedPrefs();
-//  readPhrasesDb();
+
     // List already translated texts
-    // TODO: show the original and translated language
     return Scaffold(
         appBar: AppBar(
           title: Text("Home Page"),
@@ -28,9 +29,10 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
-                await PhraseDatabaseProvider.db.deleteAllPhrases();
-                if (mounted) {
+                await widget.dbProvider.deleteAllPhrases();
+                if (mounted && list.isNotEmpty) {
                   setState(() {
+                    list.clear();
                   });
                 }
               },
@@ -38,7 +40,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body: ListView(
-          shrinkWrap: true,
           children: <Widget>[
             Center(
               child: FlatButton(
@@ -51,40 +52,40 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            (list != null)
-                ? FutureBuilder<List<Phrase>>(
-                    future: PhraseDatabaseProvider.db.getAllPhrases(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Phrase>> snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                child: ListTile(
-                                  title: Text(
-                                      "${snapshot.data[index].inputText}(${snapshot.data[index].inputLang})"),
-                                  subtitle: Text(
-                                      "${snapshot.data[index].outputText}(${snapshot.data[index].outputLang})"),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () async {
-                                      await PhraseDatabaseProvider.db
-                                          .deletePhraseWithId(list[index].id);
-                                      if (mounted) {
-                                        setState(() {});
-                                      }
-                                    },
-                                  ),
-                                ),
-                              );
-                            });
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    })
-                : SizedBox()
+            FutureBuilder<List<Phrase>>(
+              future: widget.dbProvider.getAllPhrases(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Phrase>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData && snapshot.data != null && snapshot.data.isNotEmpty) {
+                  return Column(
+                    children: snapshot.data.map((phrase) {
+                      return ListTile(
+                        title: Text("${phrase.inputText}(${phrase.inputLang})"),
+                        subtitle: Text("${phrase.outputText}(${phrase.outputLang})"),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () async {
+                            await widget.dbProvider
+                                .deletePhraseWithId(phrase.id);
+                            if (mounted && list.isNotEmpty) {
+                              setState(() {
+                                list.removeWhere((item) => item.id == phrase.id);
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  );
+                } else {
+                  return Center(child: Text("No phrases available"));
+                }
+              },
+            )
+          ],
+        )
           ],
         ));
   }
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void readPhrasesDb() async {
-    List<Phrase> phrases = await PhraseDatabaseProvider.db.getAllPhrases();
+    List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
     if (mounted) {
       setState(() {
         list = phrases;
@@ -106,12 +107,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void readSharedPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
     final key = 'audio';
-    List<String> audio = prefs.getStringList(key);
+    List<String> audio = widget.sharedPreferences.getStringList(key);
 
-    setState(() {
-//      list = audio;
-    });
+    
   }
 }
