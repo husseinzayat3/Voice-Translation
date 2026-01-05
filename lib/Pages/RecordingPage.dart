@@ -149,7 +149,9 @@ class _RecordingPageState extends State<RecordingPage> {
               if (_hasSpeech) {
                 await authenticate();
                 try {
+                  if (mounted) {
                   speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                }
                 } catch (e) {
                   errorListener(SpeechRecognitionError(e.toString(), false));
                 }
