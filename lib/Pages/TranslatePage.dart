@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -293,7 +293,7 @@ class _TranslationPageState extends State<TranslationPage> {
       }
     });
 
-    if (kIsWeb || Platform.isIOS) {
+    if (kIsWeb) {
       flutterTts.setPauseHandler(() {
         if (mounted) {
           setState(() {
