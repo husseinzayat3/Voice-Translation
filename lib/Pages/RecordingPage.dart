@@ -98,6 +98,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
     if (!mounted) return;
 
+    if (!mounted) return;
     setState(() {
       _hasSpeech = hasSpeech;
     });
@@ -230,6 +231,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
     debugPrint(result.recognizedWords);
     if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       recordingDone = true;
       text = result.recognizedWords;
@@ -240,6 +242,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
   updateBaseLanguage(selectedVal) {
     if (selectedVal == null) return;
+    if (!mounted) return;
     if (!mounted) return;
     setState(() {
       _baseLocaleId = selectedVal;
