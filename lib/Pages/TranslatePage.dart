@@ -23,20 +23,31 @@ String sanitizeInput(String input) {
 }
 
 void processSelectedVal(String? selectedVal) {
-  if (selectedVal == null) {
-    selectedVal = 'default_value'; // Provide a default value
-  }
-  var parts = selectedVal.split(',');
-  var cachedSplit = selectedVal.split('_')[0];
-  // Further processing of parts
-  if (mounted) {
-    setState(() {
-      // Update UI state here
-      _localeNames = ...; // Assign appropriate value
-      _targetLocaleId = ...; // Assign appropriate value
-    });
-  } else {
-    // Handle the case where the widget is not mounted
+  try {
+    if (selectedVal == null) {
+      selectedVal = 'default_value'; // Provide a default value
+    }
+    var parts = selectedVal.split(',');
+    var cachedSplit = selectedVal.split('_')[0];
+    // Further processing of parts
+    if (mounted) {
+      setState(() {
+        // Update UI state here
+        _localeNames = ...; // Assign appropriate value
+        _targetLocaleId = ...; // Assign appropriate value
+      });
+    } else {
+      // Handle the case where the widget is not mounted
+    }
+  } catch (e) {
+    // Log the error
+    print('Error processing selected value: $e');
+    if (mounted) {
+      setState(() {
+        // Update UI to inform the user of the error
+        _errorMessage = 'An error occurred while processing your request.';
+      });
+    }
   }
 }
 
