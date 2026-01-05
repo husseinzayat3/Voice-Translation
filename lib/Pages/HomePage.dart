@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body: ListView(
-          shrinkWrap: true,
           children: <Widget>[
             Center(
               child: FlatButton(
@@ -51,40 +50,38 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            (list != null)
-                ? FutureBuilder<List<Phrase>>(
-                    future: PhraseDatabaseProvider.db.getAllPhrases(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Phrase>> snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                child: ListTile(
-                                  title: Text(
-                                      "${snapshot.data[index].inputText}(${snapshot.data[index].inputLang})"),
-                                  subtitle: Text(
-                                      "${snapshot.data[index].outputText}(${snapshot.data[index].outputLang})"),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () async {
-                                      await PhraseDatabaseProvider.db
-                                          .deletePhraseWithId(list[index].id);
-                                      if (mounted) {
-                                        setState(() {});
-                                      }
-                                    },
-                                  ),
-                                ),
-                              );
-                            });
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    })
-                : SizedBox()
+            FutureBuilder<List<Phrase>>(
+              future: PhraseDatabaseProvider.db.getAllPhrases(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Phrase>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                  return Column(
+                    children: snapshot.data.map((phrase) {
+                      return ListTile(
+                        title: Text("${phrase.inputText}(${phrase.inputLang})"),
+                        subtitle: Text("${phrase.outputText}(${phrase.outputLang})"),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () async {
+                            await PhraseDatabaseProvider.db
+                                .deletePhraseWithId(phrase.id);
+                            if (mounted) {
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  );
+                } else {
+                  return Center(child: Text("No phrases available"));
+                }
+              },
+            )
+          ],
+        )
           ],
         ));
   }
