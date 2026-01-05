@@ -32,6 +32,8 @@ void processSelectedVal(String? selectedVal) {
   if (mounted) {
     setState(() {
       // Update UI state here
+      _localeNames = ...; // Assign appropriate value
+      _targetLocaleId = ...; // Assign appropriate value
     });
   } else {
     // Handle the case where the widget is not mounted
