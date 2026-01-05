@@ -35,12 +35,12 @@ class Phrase{
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      columnId: id,
-      columnInputText: inputText,
-      columnInputLang: inputLang,
-      columnOutputText: outputText,
-      columnOutputLang: outputLang,
-      columnDate: date
+      columnId: id ?? 0,
+      columnInputText: inputText ?? '',
+      columnInputLang: inputLang ?? '',
+      columnOutputText: outputText ?? '',
+      columnOutputLang: outputLang ?? '',
+      columnDate: date ?? ''
     };
 //    if (id != null)  {
 //      map[columnId] = id;
