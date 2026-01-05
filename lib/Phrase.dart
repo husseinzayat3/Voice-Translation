@@ -7,22 +7,27 @@ final String columnOutputLang = 'outputLang';
 final String columnDate = 'date';
 
 
-class Phrase{
+/// Represents a translation entry with input and output text and languages.
+class TranslationEntry{
   int id;
   String inputText;
   String inputLang;
   String outputText;
   String outputLang;
-  String date;
+  DateTime date;
 
-  Phrase({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
-      String outputLang = '', String date = ''}) {
+  TranslationEntry({required this.id, required String inputText, required String inputLang, required String outputText,
+      required String outputLang, DateTime? date})
+
+  String sanitize(String text) {
+    return text.replaceAll("'", "\'").replaceAll('"', '\"').replaceAll('\\', '\\\\');
+  }) {
     this.id = id;
-    this.inputText = inputText.trim();
+    this.inputText = sanitize(inputText.trim());
     this.inputLang = inputLang.trim();
-    this.outputText = outputText.trim();
+    this.outputText = sanitize(outputText.trim());
     this.outputLang = outputLang.trim();
-    this.date = date.trim();
+    this.date = date ?? DateTime.now();
   }
 
   Map<String, dynamic> toMap() {
@@ -32,22 +37,19 @@ class Phrase{
       columnInputLang: inputLang,
       columnOutputText: outputText,
       columnOutputLang: outputLang,
-      columnDate: date
+      columnDate: date.toIso8601String()
     };
-//    if (id != null)  {
-//      map[columnId] = id;
-//    }
     return map;
   }
 
 
-  Phrase.fromMap(Map<String, dynamic> map) {
+  TranslationEntry.fromMap(Map<String, dynamic> map) {
     id = map[columnId] ?? 0;
     inputText = map[columnInputText] ?? '';
     inputLang = map[columnInputLang] ?? '';
     outputText = map[columnOutputText] ?? '';
     outputLang = map[columnOutputLang] ?? '';
-    date = map[columnDate] ?? '';
+    date = DateTime.parse(map[columnDate] ?? DateTime.now().toIso8601String());
   }
 
 }

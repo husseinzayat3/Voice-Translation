@@ -1,22 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:voice_translator/Pages/RecordingPage.dart';
 import 'package:voice_translator/Phrase.dart';
 import 'package:voice_translator/dbHelper.dart';
+import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
   final PhraseDatabaseProvider dbProvider;
   final SharedPreferences sharedPreferences;
 
-  HomePage({Key key, @required this.dbProvider, @required this.sharedPreferences}) : super(key: key);
+  HomePage({Key? key, @required this.dbProvider, @required this.sharedPreferences}) : assert(dbProvider != null), assert(sharedPreferences != null), super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Phrase> list = [];
+  List<Phrase> phrasesList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -28,27 +30,61 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.delete_forever),
-              onPressed: () async {
-                await widget.dbProvider.deleteAllPhrases();
-                if (mounted && list.isNotEmpty) {
-                  setState(() {
-                    list.clear();
-                  });
+              onPressed: phrasesList.isNotEmpty ? () async {
+                bool confirmDelete = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirm Deletion'),
+                      content: Text('Are you sure you want to delete all phrases?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Delete'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (confirmDelete) {
+                  try {
+                    await widget.dbProvider.deleteAllPhrases();
+                    if (!mounted) return;
+                    setState(() {
+                      phrasesList.clear();
+                    });
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to delete phrases: \$e')),
+                      );
+                    }
+                  }
                 }
-              },
+              } : null,
             )
           ],
         ),
         body: ListView(
           children: <Widget>[
             Center(
-              child: FlatButton(
+              child: TextButton(
                 child: Text("Record"),
                 onPressed: () {
+                  if (mounted) {
                   Navigator.push(
                       context,
-                      new MaterialPageRoute(
+                      const MaterialPageRoute(
                           builder: (context) => RecordingPage()));
+                }
                 },
               ),
             ),
@@ -58,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   AsyncSnapshot<List<Phrase>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasData && snapshot.data != null && snapshot.data.isNotEmpty) {
+                } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.isNotEmpty) {
                   return Column(
                     children: snapshot.data.map((phrase) {
                       return ListTile(
@@ -69,17 +105,18 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () async {
                             await widget.dbProvider
                                 .deletePhraseWithId(phrase.id);
-                            if (mounted && list.isNotEmpty) {
-                              setState(() {
-                                list.removeWhere((item) => item.id == phrase.id);
-                              });
-                            }
+                            if (!mounted) return;
+                            setState(() {
+                              phrasesList.removeWhere((item) => item.id == phrase.id);
+                            });
                           },
                         ),
                       );
                     }).toList(),
                   );
-                } else {
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: \\${snapshot.error}'));
+                } else if (snapshot.data == null || snapshot.data.isEmpty) {
                   return Center(child: Text("No phrases available"));
                 }
               },
@@ -90,6 +127,8 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
+  final _secureStorage = FlutterSecureStorage();
+
   @override
   void initState() {
     super.initState();
@@ -99,17 +138,25 @@ class _HomePageState extends State<HomePage> {
 
   void readPhrasesDb() async {
     List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
-    if (mounted) {
-      setState(() {
-        list = phrases;
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      phrasesList = phrases;
+    });
   }
 
-  void readSharedPrefs() async {
+  Future<List<String>> readSharedPrefs() async {
     final key = 'audio';
-    List<String> audio = widget.sharedPreferences.getStringList(key);
+    String? encryptedAudio = await _secureStorage.read(key: key);
+    if (encryptedAudio != null && encryptedAudio.isNotEmpty) {
+      List<String> audio = encryptedAudio.split(',');
+      return audio;
+    }
+    return [];
+  }
 
-    
+  void saveToSharedPrefs(List<String> audio) async {
+    final key = 'audio';
+    String encryptedAudio = audio.join(',');
+    await _secureStorage.write(key: key, value: encryptedAudio);
   }
 }

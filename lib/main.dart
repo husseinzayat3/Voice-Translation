@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:voice_translator/Pages/HomePage.dart';
+import 'package:voice_translator/secure_storage.dart';
 
-void main() => runApp(MyApp());
+import 'service_locator.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -27,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -47,9 +54,48 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   @override
-  Widget build(BuildContext context) {
-    if (!mounted) return Container();
-    return new HomePage();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Handle any changes in dependencies here
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: HomePageBody(),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSensitiveData();
+  }
+
+  Future<void> _loadSensitiveData() async {
+    String apiKey = await SecureStorage.getApiKey();
+    // Use the apiKey securely within your application
+    if (!mounted) return;
+    setState(() {
+      // Update state with the loaded data
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose of any resources here
+    super.dispose();
+  }
+}
+
+class HomePageBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Welcome to the Home Page!'),
+    );
+  }
 }
