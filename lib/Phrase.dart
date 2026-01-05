@@ -39,9 +39,6 @@ class TranslationEntry{
       columnOutputLang: outputLang,
       columnDate: date.toIso8601String()
     };
-//    if (id != null)  {
-//      map[columnId] = id;
-//    }
     return map;
   }
 
