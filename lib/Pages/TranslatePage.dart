@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +51,9 @@ class _TranslationPageState extends State<TranslationPage> {
 
 
   // text translator
-  GoogleTranslator get translator => widget.translator;
+  // GoogleTranslator is injected via the constructor, no need to instantiate it here.
 
-  String _targetLocaleId = "";
+  ValueNotifier<String> _targetLocaleId = ValueNotifier("");
 
   ValueNotifier<String> translatedText = ValueNotifier("");
 
@@ -106,13 +106,13 @@ class _TranslationPageState extends State<TranslationPage> {
               DropdownButton(
                 onChanged: (selectedVal) {
                   if (selectedVal != null && selectedVal.isNotEmpty) {
-                    _switchLang(selectedVal);
+                    _targetLocaleId.value = selectedVal;
                     translateText(selectedVal.split("_")[0]);
                   } else {
                     translatedText.value = "Please select a valid language.";
                   }
                 },
-                value: _targetLocaleId,
+                value: _targetLocaleId.value,
                 items: _localeNames
                     .map(
                       (localeName) => DropdownMenuItem(
@@ -177,11 +177,7 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   _switchLang(selectedVal) {
-    if (mounted) {
-      setState(() {
-        _targetLocaleId = selectedVal;
-      });
-    }
+    _targetLocaleId.value = selectedVal;
     print(selectedVal);
   }
 
@@ -221,7 +217,9 @@ class _TranslationPageState extends State<TranslationPage> {
 
   Future _getLanguages() async {
     languages = await flutterTts.getLanguages;
-    if (languages != null) setState(() => languages);
+    if (languages != null && mounted) {
+      setState(() => languages);
+    }
   }
 
   Future _speak() async {
@@ -233,7 +231,11 @@ class _TranslationPageState extends State<TranslationPage> {
     if (_newVoiceText != null) {
       if (_newVoiceText.isNotEmpty) {
         var result = await flutterTts.speak(_newVoiceText);
-        if (result == 1 && mounted) setState(() => ttsState = TtsState.playing);
+        if (result == 1) {
+          if (mounted) {
+            setState(() => ttsState = TtsState.playing);
+          }
+        }
       }
     }
   }
@@ -241,7 +243,11 @@ class _TranslationPageState extends State<TranslationPage> {
   Future _stop() async {
     if (flutterTts == null) return;
     var result = await flutterTts.stop();
-    if (result == 1 && mounted) setState(() => ttsState = TtsState.stopped);
+    if (result == 1) {
+      if (mounted) {
+        setState(() => ttsState = TtsState.stopped);
+      }
+    }
   }
 
   Future _getEngines() async {
@@ -254,7 +260,7 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   initTts() {
-    flutterTts = FlutterTts();
+    // flutterTts is injected via the constructor, no need to instantiate it here.
 
     _getLanguages();
 
@@ -293,7 +299,7 @@ class _TranslationPageState extends State<TranslationPage> {
       }
     });
 
-    if (kIsWeb || Platform.isIOS) {
+    if (kIsWeb) {
       flutterTts.setPauseHandler(() {
         if (mounted) {
           setState(() {
@@ -314,10 +320,12 @@ class _TranslationPageState extends State<TranslationPage> {
     }
 
     flutterTts.setErrorHandler((msg) {
-      setState(() {
-        print("error: $msg");
-        ttsState = TtsState.stopped;
-      });
+      if (mounted) {
+        setState(() {
+          print("error: $msg");
+          ttsState = TtsState.stopped;
+        });
+      }
     });
   }
 

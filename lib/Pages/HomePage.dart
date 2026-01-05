@@ -29,11 +29,13 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
-                await widget.dbProvider.deleteAllPhrases();
-                if (mounted && list.isNotEmpty) {
-                  setState(() {
-                    list.clear();
-                  });
+                if (mounted) {
+                  await widget.dbProvider.deleteAllPhrases();
+                  if (list.isNotEmpty) {
+                    setState(() {
+                      list.clear();
+                    });
+                  }
                 }
               },
             )
@@ -62,17 +64,25 @@ class _HomePageState extends State<HomePage> {
                   return Column(
                     children: snapshot.data.map((phrase) {
                       return ListTile(
-                        title: Text("${phrase.inputText}(${phrase.inputLang})"),
-                        subtitle: Text("${phrase.outputText}(${phrase.outputLang})"),
+                        title: Text(Uri.encodeComponent(phrase.inputText) + "(${phrase.inputLang})"),
+                        subtitle: Text(Uri.encodeComponent(phrase.outputText) + "(${phrase.outputLang})"),
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () async {
-                            await widget.dbProvider
-                                .deletePhraseWithId(phrase.id);
-                            if (mounted && list.isNotEmpty) {
-                              setState(() {
-                                list.removeWhere((item) => item.id == phrase.id);
-                              });
+                            try {
+                              if (mounted) {
+                                await widget.dbProvider
+                                    .deletePhraseWithId(phrase.id);
+                                if (list.isNotEmpty) {
+                                  setState(() {
+                                    list.removeWhere((item) => item.id == phrase.id);
+                                  });
+                                }
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to delete phrase: \\$e')),
+                              );
                             }
                           },
                         ),
@@ -98,17 +108,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   void readPhrasesDb() async {
-    List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
-    if (mounted) {
-      setState(() {
-        list = phrases;
-      });
+    try {
+      List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
+      if (mounted && phrases != null) {
+        setState(() {
+          list = phrases;
+        });
+      }
+    } catch (e) {
+      print('Error fetching phrases: $e');
     }
   }
 
   void readSharedPrefs() async {
     final key = 'audio';
-    List<String> audio = widget.sharedPreferences.getStringList(key);
+    try {
+      List<String> audio = widget.sharedPreferences.getStringList(key) ?? [];
+      if (audio.isEmpty) {
+        print('No audio data found in shared preferences.');
+      }
+    } catch (e) {
+      print('Error reading shared preferences: $e');
+    }
 
     
   }

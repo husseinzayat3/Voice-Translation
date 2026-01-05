@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -19,6 +20,10 @@ class RecordingPage extends StatefulWidget {
 
 class _RecordingPageState extends State<RecordingPage> {
   FlutterSecureStorage get _secureStorage => widget.secureStorage;
+
+  final _encryptionKey = encrypt.Key.fromLength(32);
+  final _encrypter = encrypt.Encrypter(encrypt.AES(_encryptionKey));
+  final _iv = encrypt.IV.fromLength(16);
 
 
   void errorListener(SpeechRecognitionError error) {
@@ -50,24 +55,43 @@ class _RecordingPageState extends State<RecordingPage> {
   String lastError = "";
   String lastStatus = "";
 
-  String _baseLocaleId = "";
+  final ValueNotifier<String> _baseLocaleIdNotifier = ValueNotifier<String>("");
   List<stt.LocaleName> _localeNames = [];
 
   Future<void> initSpeechState() async {
-    bool hasSpeech = await speech.initialize(
-        onError: errorListener, onStatus: statusListener);
-    if (hasSpeech) {
-      _localeNames = await speech.locales();
+    try {
+      bool hasSpeech = false;
+      try {
+        hasSpeech = await speech.initialize(
+            onError: errorListener, onStatus: statusListener);
+        if (hasSpeech) {
+          _localeNames = await speech.locales() ?? [];
 
-      var systemLocale = await speech.systemLocale();
-      _baseLocaleId = systemLocale.localeId;
+          var systemLocale = await speech.systemLocale();
+          _baseLocaleId = systemLocale?.localeId ?? '';
+        }
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          lastError = "Initialization failed: $e";
+        });
+      }
+
+      if (!mounted) return;
+
+      if (mounted) {
+        setState(() {
+          _hasSpeech = hasSpeech;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      if (mounted) {
+        setState(() {
+          lastError = "Initialization failed: $e";
+        });
+      }
     }
-
-    if (!mounted) return;
-
-    setState(() {
-      _hasSpeech = hasSpeech;
-    });
   }
 
 
@@ -87,8 +111,8 @@ class _RecordingPageState extends State<RecordingPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               DropdownButton(
-                onChanged: (selectedVal) => updateBaseLanguage(selectedVal),
-                value: _baseLocaleId,
+                onChanged: (selectedVal) => updateSelectedLanguage(selectedVal),
+                value: _baseLocaleIdNotifier.value,
                 items: _localeNames
                     .map(
                       (localeName) => DropdownMenuItem(
@@ -115,7 +139,17 @@ class _RecordingPageState extends State<RecordingPage> {
            child: Image.asset("assets/recording.png",color: Colors.blueAccent),
             onPressed: () async {
               if (_hasSpeech) {
-                speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                try {
+                  bool available = await speech.isAvailable();
+                  if (available) {
+                    speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                  }
+                } catch (e) {
+                  if (!mounted) return;
+                  setState(() {
+                    lastError = "Listening failed: $e";
+                  });
+                }
               }
             },
           )),
@@ -147,7 +181,7 @@ class _RecordingPageState extends State<RecordingPage> {
             child:  FlatButton(
             child: Text("Translate",style: TextStyle(fontSize: 20),),
             onPressed: (){
-              if (mounted) {
+              if (mounted && context != null) {
                 Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0])));
               }
             },
@@ -169,16 +203,15 @@ class _RecordingPageState extends State<RecordingPage> {
     if (!mounted) return;
     setState(() {
       recordingDone = true;
-      text = result.recognizedWords;
+      final encryptedText = _encrypter.encrypt(result.recognizedWords, iv: _iv);
+      text = encryptedText.base64;
     });
   }
 
 
 
-  updateBaseLanguage(selectedVal) {
+  updateSelectedLanguage(selectedVal) {
     if (selectedVal == null) return;
-    setState(() {
-      _baseLocaleId = selectedVal;
-    });
+    _baseLocaleIdNotifier.value = selectedVal;
   }
 }
