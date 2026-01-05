@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:voice_translator/Pages/RecordingPage.dart';
 import 'package:voice_translator/Phrase.dart';
 import 'package:voice_translator/dbHelper.dart';
@@ -91,6 +92,8 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
+  final _secureStorage = FlutterSecureStorage();
+
   @override
   void initState() {
     super.initState();
@@ -109,8 +112,16 @@ class _HomePageState extends State<HomePage> {
 
   void readSharedPrefs() async {
     final key = 'audio';
-    List<String> audio = widget.sharedPreferences.getStringList(key);
+    String encryptedAudio = await _secureStorage.read(key: key);
+    if (encryptedAudio != null) {
+      List<String> audio = encryptedAudio.split(',');
+      // Process the decrypted audio list
+    }
+  }
 
-    
+  void saveToSharedPrefs(List<String> audio) async {
+    final key = 'audio';
+    String encryptedAudio = audio.join(',');
+    await _secureStorage.write(key: key, value: encryptedAudio);
   }
 }
