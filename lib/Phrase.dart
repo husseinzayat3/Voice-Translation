@@ -15,14 +15,14 @@ class Phrase{
   String outputLang;
   String date;
 
-  Phrase(int id, String inputText, String inputLang, String outputText,
-      String outputLang, String date) {
-    this.id = id ?? 0;
-    this.inputText = (inputText ?? '').trim();
-    this.inputLang = (inputLang ?? '').trim();
-    this.outputText = (outputText ?? '').trim();
-    this.outputLang = (outputLang ?? '').trim();
-    this.date = (date ?? '').trim();
+  Phrase({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
+      String outputLang = '', String date = ''}) {
+    this.id = id;
+    this.inputText = inputText.trim();
+    this.inputLang = inputLang.trim();
+    this.outputText = outputText.trim();
+    this.outputLang = outputLang.trim();
+    this.date = date.trim();
   }
 
   Map<String, dynamic> toMap() {
