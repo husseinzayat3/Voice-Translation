@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Phrase> list = [];
+  List<Phrase> phrasesList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
                 await widget.dbProvider.deleteAllPhrases();
                 if (mounted) {
                   setState(() {
-                    list.clear();
+                    phrasesList.clear();
                   });
                 }
               },
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                                 .deletePhraseWithId(phrase.id);
                             if (mounted) {
                               setState(() {
-                                list.removeWhere((item) => item.id == phrase.id);
+                                phrasesList.removeWhere((item) => item.id == phrase.id);
                               });
                             }
                           },
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
     List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
     if (mounted) {
       setState(() {
-        list = phrases;
+        phrasesList = phrases;
       });
     }
   }
