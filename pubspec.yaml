@@ -80,3 +80,6 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
 logger: ^1.0.0
+get_it: ^7.2.0
+some_database_package: ^1.0.0
+some_logging_package: ^1.0.0
