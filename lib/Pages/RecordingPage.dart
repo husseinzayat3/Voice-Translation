@@ -10,7 +10,7 @@ class RecordingPage extends StatefulWidget {
   final FlutterSecureStorage secureStorage;
   final stt.SpeechToText speechToText;
 
-  RecordingPage({Key key, @required this.secureStorage, @required this.speechToText}) : super(key: key);
+  RecordingPage({Key key, @required this.secureStorage, @required this.speechToText}) : assert(secureStorage != null), assert(speechToText != null), super(key: key);
 
   @override
   _RecordingPageState createState() => _RecordingPageState();
