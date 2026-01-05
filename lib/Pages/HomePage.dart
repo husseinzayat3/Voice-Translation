@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     }).toList(),
                   );
-                } else {
+                } else if (snapshot.data == null || snapshot.data.isEmpty) {
                   return Center(child: Text("No phrases available"));
                 }
               },
