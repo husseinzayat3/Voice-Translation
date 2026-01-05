@@ -12,10 +12,11 @@ void _setupServiceLocator({
 
   getIt.registerLazySingleton<stt.SpeechToText>(() => speechToTextFactory != null ? speechToTextFactory() : stt.SpeechToText());
   getIt.registerLazySingleton<FlutterTts>(() => flutterTtsFactory != null ? flutterTtsFactory() : FlutterTts());
-  getIt.registerLazySingleton<GoogleTranslator>(() => googleTranslatorFactory != null ? googleTranslatorFactory() : GoogleTranslator(baseUrl: 'https://translate.googleapis.com'));
+  getIt.registerLazySingleton<GoogleTranslator>(() => googleTranslatorFactory != null ? googleTranslatorFactory() : GoogleTranslator(baseUrl: sanitizeUrl('https://translate.googleapis.com')));
 }
 
 String sanitizeInput(String input) {
+  return input.replaceAll(RegExp(r'[<>\
   // Basic sanitization logic
   return input.replaceAll(RegExp(r'[<>"\
 ]'), '');
