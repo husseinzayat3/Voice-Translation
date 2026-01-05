@@ -60,13 +60,21 @@ class _RecordingPageState extends State<RecordingPage> {
 
   Future<void> initSpeechState() async {
     try {
-      bool hasSpeech = await speech.initialize(
-          onError: errorListener, onStatus: statusListener);
-      if (hasSpeech) {
-        _localeNames = await speech.locales();
+      bool hasSpeech = false;
+      try {
+        hasSpeech = await speech.initialize(
+            onError: errorListener, onStatus: statusListener);
+        if (hasSpeech) {
+          _localeNames = await speech.locales() ?? [];
 
-        var systemLocale = await speech.systemLocale();
-        _baseLocaleId = systemLocale.localeId;
+          var systemLocale = await speech.systemLocale();
+          _baseLocaleId = systemLocale?.localeId ?? '';
+        }
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          lastError = "Initialization failed: $e";
+        });
       }
 
       if (!mounted) return;
@@ -131,9 +139,16 @@ class _RecordingPageState extends State<RecordingPage> {
            child: Image.asset("assets/recording.png",color: Colors.blueAccent),
             onPressed: () async {
               if (_hasSpeech) {
-                bool available = await speech.isAvailable();
-                if (available) {
-                  speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                try {
+                  bool available = await speech.isAvailable();
+                  if (available) {
+                    speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                  }
+                } catch (e) {
+                  if (!mounted) return;
+                  setState(() {
+                    lastError = "Listening failed: $e";
+                  });
                 }
               }
             },
