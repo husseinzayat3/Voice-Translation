@@ -74,8 +74,9 @@ class _RecordingPageState extends State<RecordingPage> {
   List<stt.LocaleName> _localeNames = [];
 
   Future<void> initSpeechState() async {
+    bool hasSpeech = false;
     try {
-      bool hasSpeech = await speech.initialize(
+      hasSpeech = await speech.initialize(
           onError: errorListener, onStatus: statusListener);
       if (hasSpeech && speech != null) {
         if (_localeNames.isEmpty) {
@@ -147,7 +148,11 @@ class _RecordingPageState extends State<RecordingPage> {
             onPressed: () async {
               if (_hasSpeech) {
                 await authenticate();
-                speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                try {
+                  speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                } catch (e) {
+                  errorListener(SpeechRecognitionError(e.toString(), false));
+                }
               }
             },
           )),
