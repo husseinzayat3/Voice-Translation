@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -19,6 +20,10 @@ class RecordingPage extends StatefulWidget {
 
 class _RecordingPageState extends State<RecordingPage> {
   FlutterSecureStorage get _secureStorage => widget.secureStorage;
+
+  final _encryptionKey = encrypt.Key.fromLength(32);
+  final _encrypter = encrypt.Encrypter(encrypt.AES(_encryptionKey));
+  final _iv = encrypt.IV.fromLength(16);
 
 
   void errorListener(SpeechRecognitionError error) {
@@ -169,7 +174,8 @@ class _RecordingPageState extends State<RecordingPage> {
     if (!mounted) return;
     setState(() {
       recordingDone = true;
-      text = result.recognizedWords;
+      final encryptedText = _encrypter.encrypt(result.recognizedWords, iv: _iv);
+      text = encryptedText.base64;
     });
   }
 
