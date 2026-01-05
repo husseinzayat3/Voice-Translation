@@ -15,8 +15,15 @@ class Phrase{
   String outputLang;
   String date;
 
-  Phrase(this.id,this.inputText, this.inputLang, this.outputText,
-      this.outputLang, this.date);
+  Phrase(int id, String inputText, String inputLang, String outputText,
+      String outputLang, String date) {
+    this.id = id ?? 0;
+    this.inputText = (inputText ?? '').trim();
+    this.inputLang = (inputLang ?? '').trim();
+    this.outputText = (outputText ?? '').trim();
+    this.outputLang = (outputLang ?? '').trim();
+    this.date = (date ?? '').trim();
+  }
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
