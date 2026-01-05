@@ -71,6 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  @override
+  void dispose() {
+    // Dispose of any resources here
+    super.dispose();
+  }
 }
 
 class HomePageBody extends StatelessWidget {
