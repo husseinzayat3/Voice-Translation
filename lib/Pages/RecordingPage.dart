@@ -94,6 +94,7 @@ class _RecordingPageState extends State<RecordingPage> {
     if (!mounted) return;
 
     if (!mounted) return;
+
     setState(() {
       _hasSpeech = hasSpeech;
     });
