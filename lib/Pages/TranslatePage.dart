@@ -38,8 +38,11 @@ void processSelectedVal(String? selectedVal) {
       });
     }
   } catch (e) {
-    // Log the error
-    print('Error processing selected value: $e');
+    // Log the error with more context
+    final errorMessage = 'Error processing selected value: $e, selectedVal: $selectedVal';
+    print(errorMessage);
+    // Consider using a logging framework
+    // logger.log(errorMessage);
     if (mounted) {
       setState(() {
         // Update UI to inform the user of the error
