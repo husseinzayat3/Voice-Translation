@@ -233,8 +233,10 @@ class _TranslationPageState extends State<TranslationPage> {
     if (_newVoiceText != null) {
       if (_newVoiceText.isNotEmpty) {
         var result = await flutterTts.speak(_newVoiceText);
-        if (result == 1 && mounted) {
-          setState(() => ttsState = TtsState.playing);
+        if (result == 1) {
+          if (mounted) {
+            setState(() => ttsState = TtsState.playing);
+          }
         }
       }
     }
@@ -243,8 +245,10 @@ class _TranslationPageState extends State<TranslationPage> {
   Future _stop() async {
     if (flutterTts == null) return;
     var result = await flutterTts.stop();
-    if (result == 1 && mounted) {
-      setState(() => ttsState = TtsState.stopped);
+    if (result == 1) {
+      if (mounted) {
+        setState(() => ttsState = TtsState.stopped);
+      }
     }
   }
 
