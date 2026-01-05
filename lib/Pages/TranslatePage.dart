@@ -53,7 +53,7 @@ class _TranslationPageState extends State<TranslationPage> {
   // text translator
   // GoogleTranslator is injected via the constructor, no need to instantiate it here.
 
-  String _targetLocaleId = "";
+  ValueNotifier<String> _targetLocaleId = ValueNotifier("");
 
   ValueNotifier<String> translatedText = ValueNotifier("");
 
@@ -106,13 +106,13 @@ class _TranslationPageState extends State<TranslationPage> {
               DropdownButton(
                 onChanged: (selectedVal) {
                   if (selectedVal != null && selectedVal.isNotEmpty) {
-                    _switchLang(selectedVal);
+                    _targetLocaleId.value = selectedVal;
                     translateText(selectedVal.split("_")[0]);
                   } else {
                     translatedText.value = "Please select a valid language.";
                   }
                 },
-                value: _targetLocaleId,
+                value: _targetLocaleId.value,
                 items: _localeNames
                     .map(
                       (localeName) => DropdownMenuItem(
@@ -177,11 +177,7 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   _switchLang(selectedVal) {
-    if (mounted) {
-      setState(() {
-        _targetLocaleId = selectedVal;
-      });
-    }
+    _targetLocaleId.value = selectedVal;
     print(selectedVal);
   }
 
