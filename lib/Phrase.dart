@@ -13,16 +13,16 @@ class Phrase{
   String inputLang;
   String outputText;
   String outputLang;
-  String date;
+  DateTime date;
 
   Phrase({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
-      String outputLang = '', String date = ''}) {
+      String outputLang = '', DateTime? date}) {
     this.id = id;
     this.inputText = inputText.trim();
     this.inputLang = inputLang.trim();
     this.outputText = outputText.trim();
     this.outputLang = outputLang.trim();
-    this.date = date.trim();
+    this.date = date ?? DateTime.now();
   }
 
   Map<String, dynamic> toMap() {
@@ -32,7 +32,7 @@ class Phrase{
       columnInputLang: inputLang,
       columnOutputText: outputText,
       columnOutputLang: outputLang,
-      columnDate: date
+      columnDate: date.toIso8601String()
     };
 //    if (id != null)  {
 //      map[columnId] = id;
@@ -47,7 +47,7 @@ class Phrase{
     inputLang = map[columnInputLang] ?? '';
     outputText = map[columnOutputText] ?? '';
     outputLang = map[columnOutputLang] ?? '';
-    date = map[columnDate] ?? '';
+    date = DateTime.parse(map[columnDate] ?? DateTime.now().toIso8601String());
   }
 
 }
