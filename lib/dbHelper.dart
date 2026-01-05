@@ -48,20 +48,21 @@ class PhraseDatabaseProvider {
         });
   }
 
-  addPhraseToDatabase(Phrase phrase) async {
+  addPhrasesToDatabase(List<Phrase> phrases) async {
     final db = await database;
     try {
-      var raw = await db.insert(
-        "Phrase",
-        phrase.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      return raw;
+      Batch batch = db.batch();
+      for (Phrase phrase in phrases) {
+        batch.insert(
+          "Phrase",
+          phrase.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      await batch.commit(noResult: true);
     } catch (e) {
-      _logger.e('Error adding phrase', e);
-      return null;
+      _logger.e('Error adding phrases', e);
     }
-    return raw;
   }
 
   updatePhrase(Phrase phrase) async {
@@ -129,7 +130,9 @@ class PhraseDatabaseProvider {
   deleteAllPhrases() async {
     final db = await database;
     try {
-      db.delete("Phrase");
+      Batch batch = db.batch();
+      batch.delete("Phrase");
+      await batch.commit(noResult: true);
     } catch (e) {
       _logger.e('Error deleting all phrases', e);
     }
