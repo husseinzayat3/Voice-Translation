@@ -81,7 +81,9 @@ class _RecordingPageState extends State<RecordingPage> {
         _localeNames = await speech.locales();
 
         var systemLocale = await speech.systemLocale();
-        _baseLocaleId = systemLocale.localeId;
+        if (systemLocale != null) {
+          _baseLocaleId = systemLocale.localeId;
+        }
       }
     } catch (e) {
       errorListener(SpeechRecognitionError(e.toString(), false));
