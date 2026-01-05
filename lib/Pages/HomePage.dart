@@ -56,11 +56,17 @@ class _HomePageState extends State<HomePage> {
                 );
                 if (confirmDelete) {
                   try {
-                    await widget.dbProvider.deleteAllPhrases();
-                    if (mounted) {
-                      setState(() {
-                        phrasesList.clear();
-                      });
+                    try {
+                      await widget.dbProvider.deleteAllPhrases();
+                      if (mounted) {
+                        setState(() {
+                          phrasesList.clear();
+                        });
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to delete phrases: \$e')),
+                      );
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
