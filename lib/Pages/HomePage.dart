@@ -31,8 +31,9 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
                 await widget.dbProvider.deleteAllPhrases();
-                if (mounted) {
+                if (mounted && list.isNotEmpty) {
                   setState(() {
+                    list.clear();
                   });
                 }
               },
@@ -69,8 +70,10 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () async {
                             await widget.dbProvider
                                 .deletePhraseWithId(phrase.id);
-                            if (mounted) {
-                              setState(() {});
+                            if (mounted && list.isNotEmpty) {
+                              setState(() {
+                                list.removeWhere((item) => item.id == phrase.id);
+                              });
                             }
                           },
                         ),
@@ -108,8 +111,6 @@ class _HomePageState extends State<HomePage> {
     final key = 'audio';
     List<String> audio = widget.sharedPreferences.getStringList(key);
 
-    setState(() {
-
-    });
+    
   }
 }
