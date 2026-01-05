@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
   final PhraseDatabaseProvider dbProvider;
   final SharedPreferences sharedPreferences;
 
-  HomePage({Key key, @required this.dbProvider, @required this.sharedPreferences}) : super(key: key);
+  HomePage({Key key, @required this.dbProvider, @required this.sharedPreferences}) : assert(dbProvider != null), assert(sharedPreferences != null), super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
