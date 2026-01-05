@@ -83,8 +83,10 @@ class _RecordingPageState extends State<RecordingPage> {
         }
 
         var systemLocale = await speech.systemLocale();
-        if (systemLocale != null) {
+        if (systemLocale != null && _localeNames.any((locale) => locale.localeId == systemLocale.localeId)) {
           _baseLocaleId = systemLocale.localeId;
+        } else if (_localeNames.isNotEmpty) {
+          _baseLocaleId = _localeNames.first.localeId;
         }
       }
     } catch (e) {
