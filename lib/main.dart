@@ -52,4 +52,19 @@ class _MyHomePageState extends State<MyHomePage> {
     return new HomePage();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _performAsyncOperation();
+  }
+
+  Future<void> _performAsyncOperation() async {
+    // Simulate an asynchronous operation
+    await Future.delayed(Duration(seconds: 2));
+    if (!mounted) return;
+    setState(() {
+      // Update state here
+    });
+  }
+
 }
