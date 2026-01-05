@@ -16,11 +16,15 @@ class Phrase{
   DateTime date;
 
   Phrase({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
-      String outputLang = '', DateTime? date}) {
+      String outputLang = '', DateTime? date  }
+
+  String sanitize(String text) {
+    return text.replaceAll("'", "\'").replaceAll('"', '\"').replaceAll('\\', '\\\\');
+  }) {
     this.id = id;
-    this.inputText = inputText.trim();
+    this.inputText = sanitize(inputText.trim());
     this.inputLang = inputLang.trim();
-    this.outputText = outputText.trim();
+    this.outputText = sanitize(outputText.trim());
     this.outputLang = outputLang.trim();
     this.date = date ?? DateTime.now();
   }
