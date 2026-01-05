@@ -57,11 +57,10 @@ class _HomePageState extends State<HomePage> {
                 if (confirmDelete) {
                   try {
                     await widget.dbProvider.deleteAllPhrases();
-                    if (mounted) {
-                      setState(() {
-                        phrasesList.clear();
-                      });
-                    }
+                    if (!mounted) return;
+                    setState(() {
+                      phrasesList.clear();
+                    });
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -106,11 +105,10 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () async {
                             await widget.dbProvider
                                 .deletePhraseWithId(phrase.id);
-                            if (mounted) {
-                              setState(() {
-                                phrasesList.removeWhere((item) => item.id == phrase.id);
-                              });
-                            }
+                            if (!mounted) return;
+                            setState(() {
+                              phrasesList.removeWhere((item) => item.id == phrase.id);
+                            });
                           },
                         ),
                       );
@@ -140,11 +138,10 @@ class _HomePageState extends State<HomePage> {
 
   void readPhrasesDb() async {
     List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
-    if (mounted) {
-      setState(() {
-        phrasesList = phrases;
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      phrasesList = phrases;
+    });
   }
 
   void readSharedPrefs() async {
