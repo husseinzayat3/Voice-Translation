@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             FutureBuilder<List<Phrase>>(
-              future: widget.dbProvider.getAllPhrases(),
+              future: Future.value(phrasesList),
               builder: (BuildContext context,
                   AsyncSnapshot<List<Phrase>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
