@@ -228,25 +228,23 @@ class _TranslationPageState extends State<TranslationPage> {
   }
 
   Future _speak() async {
-    if (flutterTts != null) {
-      await flutterTts.setVolume(volume);
-      await flutterTts.setSpeechRate(rate);
-      await flutterTts.setPitch(pitch);
+    if (flutterTts == null) return;
+    await flutterTts.setVolume(volume);
+    await flutterTts.setSpeechRate(rate);
+    await flutterTts.setPitch(pitch);
 
-      if (_newVoiceText != null) {
-        if (_newVoiceText.isNotEmpty) {
-          var result = await flutterTts.speak(_newVoiceText);
-          if (result == 1) setState(() => ttsState = TtsState.playing);
-        }
+    if (_newVoiceText != null) {
+      if (_newVoiceText.isNotEmpty) {
+        var result = await flutterTts.speak(_newVoiceText);
+        if (result == 1) setState(() => ttsState = TtsState.playing);
       }
     }
   }
 
   Future _stop() async {
-    if (flutterTts != null) {
-      var result = await flutterTts.stop();
-      if (result == 1) setState(() => ttsState = TtsState.stopped);
-    }
+    if (flutterTts == null) return;
+    var result = await flutterTts.stop();
+    if (result == 1) setState(() => ttsState = TtsState.stopped);
   }
 
   Future _getEngines() async {
