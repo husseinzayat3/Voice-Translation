@@ -1,7 +1,7 @@
 void _setupServiceLocator({
-  stt.SpeechToText Function()? speechToTextFactory,
-  FlutterTts Function()? flutterTtsFactory,
-  GoogleTranslator Function()? googleTranslatorFactory,
+  required stt.SpeechToText Function() speechToTextFactory,
+  required FlutterTts Function() flutterTtsFactory,
+  required GoogleTranslator Function() googleTranslatorFactory,
 }) {
   final getIt = GetIt.instance;
 
