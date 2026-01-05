@@ -81,10 +81,12 @@ class _HomePageState extends State<HomePage> {
               child: TextButton(
                 child: Text("Record"),
                 onPressed: () {
+                  if (mounted) {
                   Navigator.push(
                       context,
                       new MaterialPageRoute(
                           builder: (context) => RecordingPage()));
+                }
                 },
               ),
             ),
