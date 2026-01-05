@@ -29,11 +29,13 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
-                await widget.dbProvider.deleteAllPhrases();
-                if (mounted && list.isNotEmpty) {
-                  setState(() {
-                    list.clear();
-                  });
+                if (mounted) {
+                  await widget.dbProvider.deleteAllPhrases();
+                  if (list.isNotEmpty) {
+                    setState(() {
+                      list.clear();
+                    });
+                  }
                 }
               },
             )
@@ -68,12 +70,14 @@ class _HomePageState extends State<HomePage> {
                           icon: Icon(Icons.delete),
                           onPressed: () async {
                             try {
-                              await widget.dbProvider
-                                  .deletePhraseWithId(phrase.id);
-                              if (mounted && list.isNotEmpty) {
-                                setState(() {
-                                  list.removeWhere((item) => item.id == phrase.id);
-                                });
+                              if (mounted) {
+                                await widget.dbProvider
+                                    .deletePhraseWithId(phrase.id);
+                                if (list.isNotEmpty) {
+                                  setState(() {
+                                    list.removeWhere((item) => item.id == phrase.id);
+                                  });
+                                }
                               }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
