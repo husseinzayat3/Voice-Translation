@@ -16,8 +16,8 @@ class TranslationEntry{
   String outputLang;
   DateTime date;
 
-  Phrase({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
-      String outputLang = '', DateTime? date  }
+  TranslationEntry({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
+      String outputLang = '', DateTime? date})
 
   String sanitize(String text) {
     return text.replaceAll("'", "\'").replaceAll('"', '\"').replaceAll('\\', '\\\\');
@@ -46,7 +46,7 @@ class TranslationEntry{
   }
 
 
-  Phrase.fromMap(Map<String, dynamic> map) {
+  TranslationEntry.fromMap(Map<String, dynamic> map) {
     id = map[columnId] ?? 0;
     inputText = map[columnInputText] ?? '';
     inputLang = map[columnInputLang] ?? '';
