@@ -322,10 +322,12 @@ class _TranslationPageState extends State<TranslationPage> {
     }
 
     flutterTts.setErrorHandler((msg) {
-      setState(() {
-        print("error: $msg");
-        ttsState = TtsState.stopped;
-      });
+      if (mounted) {
+        setState(() {
+          print("error: $msg");
+          ttsState = TtsState.stopped;
+        });
+      }
     });
   }
 
