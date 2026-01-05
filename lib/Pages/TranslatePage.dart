@@ -32,6 +32,8 @@ void processSelectedVal(String? selectedVal) {
     setState(() {
       // Update UI state here
     });
+  } else {
+    // Handle the case where the widget is not mounted
   }
 }
 
