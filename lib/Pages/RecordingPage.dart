@@ -7,7 +7,9 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:voice_translator/Pages/TranslatePage.dart';
 
 class RecordingPage extends StatefulWidget {
-  final FlutterSecureStorage secureStorage = GetIt.instance<FlutterSecureStorage>();
+  final FlutterSecureStorage secureStorage = GetIt.instance<FlutterSecureStorage>(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock));
   final stt.SpeechToText speechToText = GetIt.instance<stt.SpeechToText>();
 
   RecordingPage({Key key}) : super(key: key);
@@ -19,6 +21,16 @@ class RecordingPage extends StatefulWidget {
 
 class _RecordingPageState extends State<RecordingPage> {
   FlutterSecureStorage get _secureStorage => widget.secureStorage;
+
+  Future<void> authenticate() async {
+    final isAuthenticated = await LocalAuthentication().authenticate(
+      localizedReason: 'Please authenticate to access secure storage',
+      options: const AuthenticationOptions(biometricOnly: true),
+    );
+    if (!isAuthenticated) {
+      throw Exception('Authentication failed');
+    }
+  }
 
 
   void errorListener(SpeechRecognitionError error) {
@@ -115,6 +127,7 @@ class _RecordingPageState extends State<RecordingPage> {
            child: Image.asset("assets/recording.png",color: Colors.blueAccent),
             onPressed: () async {
               if (_hasSpeech) {
+                await authenticate();
                 speech.listen(onResult: resultListener, localeId: _baseLocaleId);
               }
             },
