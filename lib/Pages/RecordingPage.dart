@@ -150,7 +150,11 @@ class _RecordingPageState extends State<RecordingPage> {
                 await authenticate();
                 try {
                   if (mounted) {
+                  if (_localeNames.any((locale) => locale.localeId == _baseLocaleId)) {
                   speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                } else {
+                  errorListener(SpeechRecognitionError('Invalid localeId: $_baseLocaleId', false));
+                }
                 }
                 } catch (e) {
                   errorListener(SpeechRecognitionError(e.toString(), false));
