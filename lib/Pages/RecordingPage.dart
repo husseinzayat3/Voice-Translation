@@ -7,10 +7,10 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:voice_translator/Pages/TranslatePage.dart';
 
 class RecordingPage extends StatefulWidget {
-  final FlutterSecureStorage secureStorage;
-  final stt.SpeechToText speechToText;
+  final FlutterSecureStorage secureStorage = GetIt.instance<FlutterSecureStorage>();
+  final stt.SpeechToText speechToText = GetIt.instance<stt.SpeechToText>();
 
-  RecordingPage({Key key, @required this.secureStorage, @required this.speechToText}) : super(key: key);
+  RecordingPage({Key key}) : super(key: key);
 
   @override
   _RecordingPageState createState() => _RecordingPageState();

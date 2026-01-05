@@ -1,11 +1,10 @@
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voice_translator/dbHelper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 final GetIt getIt = GetIt.instance;
 
-Future<void> setupLocator() async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
-  getIt.registerSingleton<PhraseDatabaseProvider>(PhraseDatabaseProvider());
+void setupLocator() {
+  getIt.registerLazySingleton<FlutterSecureStorage>(() => FlutterSecureStorage());
+  getIt.registerLazySingleton<stt.SpeechToText>(() => stt.SpeechToText());
 }
