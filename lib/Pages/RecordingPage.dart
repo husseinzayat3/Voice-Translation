@@ -193,7 +193,7 @@ class _RecordingPageState extends State<RecordingPage> {
             child: Text("Translate", style: TextStyle(fontSize: 20)),
             onPressed: () {
               if (mounted) {
-                Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text: text, translateFrom: _baseLocaleId.split("_")[0])));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TranslationPage(text: text, translateFrom: _baseLocaleId.split("_")[0])));
               }
             },
           ))]):SizedBox()
