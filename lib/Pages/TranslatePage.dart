@@ -3,5 +3,5 @@ void _setupServiceLocator() {
 
   getIt.registerLazySingleton<stt.SpeechToText>(() => stt.SpeechToText());
   getIt.registerLazySingleton<FlutterTts>(() => FlutterTts());
-  getIt.registerLazySingleton<GoogleTranslator>(() => GoogleTranslator());
+  getIt.registerLazySingleton<GoogleTranslator>(() => GoogleTranslator(baseUrl: 'https://translate.googleapis.com'));
 }
