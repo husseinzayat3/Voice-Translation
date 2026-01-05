@@ -27,7 +27,7 @@ class PhraseDatabaseProvider {
       _database = await getDatabaseInstance();
     } catch (e) {
       _logger.e('Error opening database', e);
-      return null;
+      rethrow;
     }
     return _database;
   }
