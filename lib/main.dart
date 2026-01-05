@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Simulate an asynchronous operation
     await Future.delayed(Duration(seconds: 2));
     if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       // Update state here
     });
