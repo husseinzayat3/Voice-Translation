@@ -77,7 +77,7 @@ class _RecordingPageState extends State<RecordingPage> {
     try {
       bool hasSpeech = await speech.initialize(
           onError: errorListener, onStatus: statusListener);
-      if (hasSpeech) {
+      if (hasSpeech && speech != null) {
         _localeNames = await speech.locales();
 
         var systemLocale = await speech.systemLocale();
