@@ -22,17 +22,16 @@ String sanitizeInput(String input) {
 }
 
 void processSelectedVal(String? selectedVal) {
-  if (selectedVal != null) {
-    var parts = selectedVal.split(',');
-    var cachedSplit = selectedVal.split('_')[0];
-    // Further processing of parts
-    if (mounted) {
-      setState(() {
-        // Update UI state here
-      });
-    }
-  } else {
-    // Handle the null case appropriately
+  if (selectedVal == null) {
+    selectedVal = 'default_value'; // Provide a default value
+  }
+  var parts = selectedVal.split(',');
+  var cachedSplit = selectedVal.split('_')[0];
+  // Further processing of parts
+  if (mounted) {
+    setState(() {
+      // Update UI state here
+    });
   }
 }
 
