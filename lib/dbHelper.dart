@@ -6,8 +6,8 @@
         _logger = locator.get<Logger>();
 
   Future<T> _executeDbOperation<T>(Future<T> Function(Database db) operation, String errorMessage) async {
-    if (database == null) {
-      _logger.e(errorMessage, Exception('Database is null'));
+    if (database == null || !database.isOpen) {
+      _logger.e(errorMessage, Exception('Database is null or closed'));
       return null;
     }
     final db = await database;
