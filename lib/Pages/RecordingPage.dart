@@ -74,7 +74,6 @@ class _RecordingPageState extends State<RecordingPage> {
   @override
   Widget build(BuildContext context) {
 
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(title: Text("Record Page"),),
       body: ListView(
