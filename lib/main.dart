@@ -48,6 +48,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Handle any changes in dependencies here
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
