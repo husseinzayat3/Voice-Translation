@@ -55,7 +55,7 @@ class _RecordingPageState extends State<RecordingPage> {
   String lastError = "";
   String lastStatus = "";
 
-  String _baseLocaleId = "";
+  final ValueNotifier<String> _baseLocaleIdNotifier = ValueNotifier<String>("");
   List<stt.LocaleName> _localeNames = [];
 
   Future<void> initSpeechState() async {
@@ -104,7 +104,7 @@ class _RecordingPageState extends State<RecordingPage> {
             children: <Widget>[
               DropdownButton(
                 onChanged: (selectedVal) => updateSelectedLanguage(selectedVal),
-                value: _baseLocaleId,
+                value: _baseLocaleIdNotifier.value,
                 items: _localeNames
                     .map(
                       (localeName) => DropdownMenuItem(
@@ -197,8 +197,6 @@ class _RecordingPageState extends State<RecordingPage> {
 
   updateSelectedLanguage(selectedVal) {
     if (selectedVal == null) return;
-    setState(() {
-      _baseLocaleId = selectedVal;
-    });
+    _baseLocaleIdNotifier.value = selectedVal;
   }
 }
