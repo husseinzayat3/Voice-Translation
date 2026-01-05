@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voice_translator/Pages/HomePage.dart';
+import 'package:voice_translator/secure_storage.dart';
 
 void main() => runApp(MyApp());
 
@@ -59,16 +60,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _performAsyncOperation();
+    _loadSensitiveData();
   }
 
-  Future<void> _performAsyncOperation() async {
-    // Simulate an asynchronous operation
-    await Future.delayed(Duration(seconds: 2));
-    if (!mounted) return;
+  Future<void> _loadSensitiveData() async {
+    String apiKey = await SecureStorage.getApiKey();
+    // Use the apiKey securely within your application
     if (!mounted) return;
     setState(() {
-      // Update state here
+      // Update state with the loaded data
     });
   }
 
