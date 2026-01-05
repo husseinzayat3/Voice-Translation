@@ -59,20 +59,27 @@ class _RecordingPageState extends State<RecordingPage> {
   List<stt.LocaleName> _localeNames = [];
 
   Future<void> initSpeechState() async {
-    bool hasSpeech = await speech.initialize(
-        onError: errorListener, onStatus: statusListener);
-    if (hasSpeech) {
-      _localeNames = await speech.locales();
+    try {
+      bool hasSpeech = await speech.initialize(
+          onError: errorListener, onStatus: statusListener);
+      if (hasSpeech) {
+        _localeNames = await speech.locales();
 
-      var systemLocale = await speech.systemLocale();
-      _baseLocaleId = systemLocale.localeId;
+        var systemLocale = await speech.systemLocale();
+        _baseLocaleId = systemLocale.localeId;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _hasSpeech = hasSpeech;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        lastError = "Initialization failed: $e";
+      });
     }
-
-    if (!mounted) return;
-
-    setState(() {
-      _hasSpeech = hasSpeech;
-    });
   }
 
 
