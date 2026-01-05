@@ -67,12 +67,18 @@ class _HomePageState extends State<HomePage> {
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () async {
-                            await widget.dbProvider
-                                .deletePhraseWithId(phrase.id);
-                            if (mounted && list.isNotEmpty) {
-                              setState(() {
-                                list.removeWhere((item) => item.id == phrase.id);
-                              });
+                            try {
+                              await widget.dbProvider
+                                  .deletePhraseWithId(phrase.id);
+                              if (mounted && list.isNotEmpty) {
+                                setState(() {
+                                  list.removeWhere((item) => item.id == phrase.id);
+                                });
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to delete phrase: \\$e')),
+                              );
                             }
                           },
                         ),
