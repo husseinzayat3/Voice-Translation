@@ -162,7 +162,7 @@ class _RecordingPageState extends State<RecordingPage> {
             child:  FlatButton(
             child: Text("Translate",style: TextStyle(fontSize: 20),),
             onPressed: (){
-              if (mounted) {
+              if (mounted && context != null) {
                 Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0])));
               }
             },
