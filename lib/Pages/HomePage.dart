@@ -30,14 +30,14 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.delete_forever),
-              onPressed: () async {
+              onPressed: phrasesList.isNotEmpty ? () async {
                 await widget.dbProvider.deleteAllPhrases();
                 if (mounted) {
                   setState(() {
                     phrasesList.clear();
                   });
                 }
-              },
+              } : null,
             )
           ],
         ),
