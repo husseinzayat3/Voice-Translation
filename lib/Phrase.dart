@@ -16,8 +16,8 @@ class TranslationEntry{
   String outputLang;
   DateTime date;
 
-  TranslationEntry({int id = 0, String inputText = '', String inputLang = '', String outputText = '',
-      String outputLang = '', DateTime? date})
+  TranslationEntry({required this.id, required String inputText, required String inputLang, required String outputText,
+      required String outputLang, DateTime? date})
 
   String sanitize(String text) {
     return text.replaceAll("'", "\'").replaceAll('"', '\"').replaceAll('\\', '\\\\');
