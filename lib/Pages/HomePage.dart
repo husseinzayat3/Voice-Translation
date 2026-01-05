@@ -6,7 +6,10 @@ import 'package:voice_translator/Phrase.dart';
 import 'package:voice_translator/dbHelper.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final PhraseDatabaseProvider dbProvider;
+  final SharedPreferences sharedPreferences;
+
+  HomePage({Key key, @required this.dbProvider, @required this.sharedPreferences}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -27,7 +30,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.delete_forever),
               onPressed: () async {
-                await PhraseDatabaseProvider.db.deleteAllPhrases();
+                await widget.dbProvider.deleteAllPhrases();
                 if (mounted) {
                   setState(() {
                   });
@@ -50,7 +53,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             FutureBuilder<List<Phrase>>(
-              future: PhraseDatabaseProvider.db.getAllPhrases(),
+              future: widget.dbProvider.getAllPhrases(),
               builder: (BuildContext context,
                   AsyncSnapshot<List<Phrase>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -64,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () async {
-                            await PhraseDatabaseProvider.db
+                            await widget.dbProvider
                                 .deletePhraseWithId(phrase.id);
                             if (mounted) {
                               setState(() {});
@@ -93,7 +96,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void readPhrasesDb() async {
-    List<Phrase> phrases = await PhraseDatabaseProvider.db.getAllPhrases();
+    List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
     if (mounted) {
       setState(() {
         list = phrases;
@@ -102,9 +105,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void readSharedPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
     final key = 'audio';
-    List<String> audio = prefs.getStringList(key);
+    List<String> audio = widget.sharedPreferences.getStringList(key);
 
     setState(() {
 
