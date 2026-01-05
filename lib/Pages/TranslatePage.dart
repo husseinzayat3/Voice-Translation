@@ -1,3 +1,5 @@
+String _newVoiceText = '';
+
 void _setupServiceLocator({
   required stt.SpeechToText Function() speechToTextFactory,
   required FlutterTts Function() flutterTtsFactory,
