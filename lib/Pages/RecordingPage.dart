@@ -167,17 +167,19 @@ class _RecordingPageState extends State<RecordingPage> {
               width: 80,
               height: 80,
               margin: EdgeInsets.only(top: 50),
-              child:FlatButton(
-                padding: EdgeInsets.all(10),
-                shape: RoundedRectangleBorder(
+              child:TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(10),
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(color: Colors.blueAccent)
+                    side: BorderSide(color: Colors.blueAccent),
+                  ),
                 ),
-              child:  Image.asset("assets/stop-recording.png",color: Colors.blueAccent,),
-          onPressed: () async {
-              speech.stop();
-            },
-          )),
+                child: Image.asset("assets/stop-recording.png", color: Colors.blueAccent),
+                onPressed: () async {
+                  speech.stop();
+                },
+              )),
           recordingDone?
           Column(
               children: <Widget>[
@@ -187,11 +189,11 @@ class _RecordingPageState extends State<RecordingPage> {
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                         border: Border.all(color: Colors.blueAccent)
                     ),
-            child:  FlatButton(
-            child: Text("Translate",style: TextStyle(fontSize: 20),),
-            onPressed: (){
+            child:  TextButton(
+            child: Text("Translate", style: TextStyle(fontSize: 20)),
+            onPressed: () {
               if (mounted) {
-                Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text:text,translateFrom: _baseLocaleId.split("_")[0])));
+                Navigator.push(context, new MaterialPageRoute(builder: (context) => TranslationPage(text: text, translateFrom: _baseLocaleId.split("_")[0])));
               }
             },
           ))]):SizedBox()
