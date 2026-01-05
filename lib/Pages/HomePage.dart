@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
 
   void readPhrasesDb() async {
     List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
-    if (mounted) {
+    if (mounted && phrases != null) {
       setState(() {
         list = phrases;
       });
