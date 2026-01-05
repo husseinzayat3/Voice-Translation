@@ -196,9 +196,11 @@ class _TranslationPageState extends State<TranslationPage> {
     }
     if (!mounted) return;
 
-    setState(() {
-      _hasSpeech = hasSpeech;
-    });
+    if (mounted) {
+      setState(() {
+        _hasSpeech = hasSpeech;
+      });
+    }
   }
 
   void errorListener(SpeechRecognitionError error) {
