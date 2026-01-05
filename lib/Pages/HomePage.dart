@@ -31,11 +31,36 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.delete_forever),
               onPressed: phrasesList.isNotEmpty ? () async {
-                await widget.dbProvider.deleteAllPhrases();
-                if (mounted) {
-                  setState(() {
-                    phrasesList.clear();
-                  });
+                bool confirmDelete = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirm Deletion'),
+                      content: Text('Are you sure you want to delete all phrases?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Delete'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (confirmDelete) {
+                  await widget.dbProvider.deleteAllPhrases();
+                  if (mounted) {
+                    setState(() {
+                      phrasesList.clear();
+                    });
+                  }
                 }
               } : null,
             )
