@@ -37,6 +37,12 @@ class _RecordingPageState extends State<RecordingPage> {
     setState(() {
       lastError = "${error.errorMsg} - ${error.permanent}";
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error: ${error.errorMsg}'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   void statusListener(String status) {
