@@ -116,6 +116,8 @@ class _HomePageState extends State<HomePage> {
                       );
                     }).toList(),
                   );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: \\${snapshot.error}'));
                 } else if (snapshot.data == null || snapshot.data.isEmpty) {
                   return Center(child: Text("No phrases available"));
                 }
