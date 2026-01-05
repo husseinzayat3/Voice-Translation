@@ -144,13 +144,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void readSharedPrefs() async {
+  void readSharedPrefs() {
     final key = 'audio';
-    String? encryptedAudio = await _secureStorage.read(key: key);
-    if (encryptedAudio != null && encryptedAudio.isNotEmpty) {
-      List<String> audio = encryptedAudio.split(',');
-      // Process the decrypted audio list
-    }
+    _secureStorage.read(key: key).then((encryptedAudio) {
+      if (encryptedAudio != null && encryptedAudio.isNotEmpty) {
+        List<String> audio = encryptedAudio.split(',');
+        // Process the decrypted audio list
+      }
+    });
   }
 
   void saveToSharedPrefs(List<String> audio) async {
