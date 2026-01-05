@@ -21,6 +21,15 @@ String sanitizeInput(String input) {
 ]'), '');
 }
 
+void processSelectedVal(String? selectedVal) {
+  if (selectedVal != null) {
+    var parts = selectedVal.split(',');
+    // Further processing of parts
+  } else {
+    // Handle the null case appropriately
+  }
+}
+
 bool validateInput(String input) {
   // Basic validation logic
   return input.isNotEmpty && input.length < 1000;
