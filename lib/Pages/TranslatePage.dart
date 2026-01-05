@@ -26,6 +26,11 @@ void processSelectedVal(String? selectedVal) {
     var parts = selectedVal.split(',');
     var cachedSplit = selectedVal.split('_')[0];
     // Further processing of parts
+    if (mounted) {
+      setState(() {
+        // Update UI state here
+      });
+    }
   } else {
     // Handle the null case appropriately
   }
