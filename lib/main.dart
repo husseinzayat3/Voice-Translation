@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:voice_translator/Pages/HomePage.dart';
 import 'package:voice_translator/secure_storage.dart';
 
-void main() => runApp(MyApp());
+import 'service_locator.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
