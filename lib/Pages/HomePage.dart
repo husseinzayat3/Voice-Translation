@@ -58,11 +58,9 @@ class _HomePageState extends State<HomePage> {
                   try {
                     await widget.dbProvider.deleteAllPhrases();
                     if (mounted) {
-                      if (mounted) {
-                        setState(() {
-                          phrasesList.clear();
-                        });
-                      }
+                      setState(() {
+                        phrasesList.clear();
+                      });
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
