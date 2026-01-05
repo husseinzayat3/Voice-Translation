@@ -34,9 +34,11 @@ class _RecordingPageState extends State<RecordingPage> {
   void errorListener(SpeechRecognitionError error) {
     // print("Received error status: $error, listening: ${speech.isListening}");
     if (!mounted) return;
-    setState(() {
-      lastError = "${error.errorMsg} - ${error.permanent}";
-    });
+    if (lastError != "${error.errorMsg} - ${error.permanent}") {
+      setState(() {
+        lastError = "${error.errorMsg} - ${error.permanent}";
+      });
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Error: ${error.errorMsg}'),
@@ -49,9 +51,11 @@ class _RecordingPageState extends State<RecordingPage> {
     // print(
     // "Received listener status: $status, listening: ${speech.isListening}");
     if (!mounted) return;
-    setState(() {
-      lastStatus = "$status";
-    });
+    if (lastStatus != "$status") {
+      setState(() {
+        lastStatus = "$status";
+      });
+    }
   }
 
   bool available = true;
