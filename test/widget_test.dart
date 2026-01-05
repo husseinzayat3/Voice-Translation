@@ -16,6 +16,10 @@ void main() {
     await tester.pumpWidget(MyApp());
     await tester.pumpAndSettle();
 
+    // Ensure the widget is in the initial state.
+    await tester.tap(find.byIcon(Icons.refresh)); // Assuming there's a reset button
+    await tester.pumpAndSettle();
+
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
