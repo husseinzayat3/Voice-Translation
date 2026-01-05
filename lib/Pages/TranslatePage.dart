@@ -265,6 +265,10 @@ class _TranslationPageState extends State<TranslationPage> {
       _getEngines();
     }
 
+    _setupTtsHandlers();
+  }
+
+  void _setupTtsHandlers() {
     flutterTts.setStartHandler(() {
       setState(() {
         print("Playing");
