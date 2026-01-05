@@ -22,7 +22,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     // List already translated texts
-    // TODO: show the original and translated language
     return Scaffold(
         appBar: AppBar(
           title: Text("Home Page"),
