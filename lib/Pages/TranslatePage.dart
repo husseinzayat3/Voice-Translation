@@ -14,8 +14,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class TranslationPage extends StatefulWidget {
   final String text;
   final String translateFrom;
+  final stt.SpeechToText speechToText;
+  final FlutterTts flutterTts;
+  final GoogleTranslator translator;
 
-  TranslationPage({Key key, this.text, this.translateFrom}) : super(key: key);
+  TranslationPage({Key key, this.text, this.translateFrom, @required this.speechToText, @required this.flutterTts, @required this.translator}) : super(key: key);
 
   @override
   _TranslationPageState createState() => _TranslationPageState();
@@ -24,10 +27,10 @@ class TranslationPage extends StatefulWidget {
 class _TranslationPageState extends State<TranslationPage> {
 
   // speech to text
-  stt.SpeechToText speech = stt.SpeechToText();
+  stt.SpeechToText get speech => widget.speechToText;
 
   // text to speech
-  FlutterTts flutterTts;
+  FlutterTts get flutterTts => widget.flutterTts;
   dynamic languages;
   String language;
   double volume = 0.5;
@@ -48,7 +51,7 @@ class _TranslationPageState extends State<TranslationPage> {
 
 
   // text translator
-  final translator = GoogleTranslator();
+  GoogleTranslator get translator => widget.translator;
 
   String _targetLocaleId = "";
 
