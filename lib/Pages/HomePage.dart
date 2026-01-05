@@ -7,10 +7,10 @@ import 'package:voice_translator/dbHelper.dart';
 import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
-  final PhraseDatabaseProvider dbProvider = GetIt.instance<PhraseDatabaseProvider>();
-  final SharedPreferences sharedPreferences = GetIt.instance<SharedPreferences>();
+  final PhraseDatabaseProvider dbProvider;
+  final SharedPreferences sharedPreferences;
 
-  HomePage({Key key}) : super(key: key);
+  HomePage({Key key, @required this.dbProvider, @required this.sharedPreferences}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
