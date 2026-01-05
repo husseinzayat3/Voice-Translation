@@ -34,6 +34,7 @@ class _RecordingPageState extends State<RecordingPage> {
   void errorListener(SpeechRecognitionError error) {
     // print("Received error status: $error, listening: ${speech.isListening}");
     if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       lastError = "${error.errorMsg} - ${error.permanent}";
     });
@@ -48,6 +49,7 @@ class _RecordingPageState extends State<RecordingPage> {
   void statusListener(String status) {
     // print(
     // "Received listener status: $status, listening: ${speech.isListening}");
+    if (!mounted) return;
     if (!mounted) return;
     setState(() {
       lastStatus = "$status";
@@ -81,6 +83,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
     if (!mounted) return;
 
+    if (!mounted) return;
     setState(() {
       _hasSpeech = hasSpeech;
     });
@@ -184,6 +187,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
     debugPrint(result.recognizedWords);
     if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       recordingDone = true;
       text = result.recognizedWords;
@@ -194,6 +198,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
   updateBaseLanguage(selectedVal) {
     if (selectedVal == null) return;
+    if (!mounted) return;
     setState(() {
       _baseLocaleId = selectedVal;
     });
