@@ -203,6 +203,23 @@ class _RecordingPageState extends State<RecordingPage> {
     );
   }
 
+  void _startRecording() async {
+    if (_hasSpeech) {
+      await authenticate();
+      try {
+        if (mounted) {
+          if (_localeNames.any((locale) => locale.localeId == _baseLocaleId)) {
+            speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+          } else {
+            errorListener(SpeechRecognitionError('Invalid localeId: $_baseLocaleId', false));
+          }
+        }
+      } catch (e) {
+        errorListener(SpeechRecognitionError(e.toString(), false));
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
