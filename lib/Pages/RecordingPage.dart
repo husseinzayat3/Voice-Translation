@@ -127,7 +127,10 @@ class _RecordingPageState extends State<RecordingPage> {
            child: Image.asset("assets/recording.png",color: Colors.blueAccent),
             onPressed: () async {
               if (_hasSpeech) {
-                speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                bool available = await speech.isAvailable();
+                if (available) {
+                  speech.listen(onResult: resultListener, localeId: _baseLocaleId);
+                }
               }
             },
           )),
