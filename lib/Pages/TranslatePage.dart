@@ -36,8 +36,6 @@ void processSelectedVal(String? selectedVal) {
         _localeNames = ...; // Assign appropriate value
         _targetLocaleId = ...; // Assign appropriate value
       });
-    } else {
-      // Handle the case where the widget is not mounted
     }
   } catch (e) {
     // Log the error
