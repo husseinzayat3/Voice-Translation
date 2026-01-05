@@ -17,8 +17,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-//    readSharedPrefs();
-//  readPhrasesDb();
+
     // List already translated texts
     // TODO: show the original and translated language
     return Scaffold(
@@ -108,7 +107,7 @@ class _HomePageState extends State<HomePage> {
     List<String> audio = prefs.getStringList(key);
 
     setState(() {
-//      list = audio;
+
     });
   }
 }
