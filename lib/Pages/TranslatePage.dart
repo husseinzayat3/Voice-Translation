@@ -144,9 +144,9 @@ class _TranslationPageState extends State<TranslationPage> {
                    isPressed=!isPressed;
                  });
                 },),
-                  title: Text(translatedText.isNotEmpty
+                  title: Text(translatedText != null && translatedText.isNotEmpty
                       ? translatedText
-                      : "Please choose transalte language"))),
+                      : "Please choose a translate language"))),
         ],
       ),
     );
