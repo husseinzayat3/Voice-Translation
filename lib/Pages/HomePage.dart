@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   AsyncSnapshot<List<Phrase>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasData && snapshot.data != null && snapshot.data.isNotEmpty) {
+                } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.isNotEmpty) {
                   return Column(
                     children: snapshot.data.map((phrase) {
                       return ListTile(
