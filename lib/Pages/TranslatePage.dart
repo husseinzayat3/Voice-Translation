@@ -52,7 +52,7 @@ class _TranslationPageState extends State<TranslationPage> {
 
   String _targetLocaleId = "";
 
-  String translatedText = "";
+  ValueNotifier<String> translatedText = ValueNotifier("");
 
   String translateTo = "";
   List<stt.LocaleName> _localeNames = [];
@@ -61,7 +61,7 @@ class _TranslationPageState extends State<TranslationPage> {
   String lastError = "";
   String lastStatus = "";
 
-  bool isPressed = false;
+  ValueNotifier<bool> isPressed = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +106,7 @@ class _TranslationPageState extends State<TranslationPage> {
                     _switchLang(selectedVal);
                     translateText(selectedVal.split("_")[0]);
                   } else {
-                    setState(() {
-                      translatedText = "Please select a valid language.";
-                    });
+                    translatedText.value = "Please select a valid language.";
                   }
                 },
                 value: _targetLocaleId,
@@ -131,7 +129,10 @@ class _TranslationPageState extends State<TranslationPage> {
                   border: Border.all(color: Colors.blueAccent)),
               alignment: Alignment.center,
               child: ListTile(
-                trailing: IconButton(icon: Icon(isPressed?Icons.stop:Icons.record_voice_over),
+                trailing: ValueListenableBuilder(
+                  valueListenable: isPressed,
+                  builder: (context, value, child) {
+                    return IconButton(icon: Icon(value ? Icons.stop : Icons.record_voice_over),
                 onPressed: () async{
 
                  if(isPressed){
@@ -140,13 +141,14 @@ class _TranslationPageState extends State<TranslationPage> {
                    _stop();
                  }
 
-                 setState(() {
-                   isPressed=!isPressed;
-                 });
+                 isPressed.value = !isPressed.value;
                 },),
-                  title: Text(translatedText != null && translatedText.isNotEmpty
-                      ? translatedText
-                      : "Please choose a translate language"))),
+                  title: ValueListenableBuilder(
+                  valueListenable: translatedText,
+                  builder: (context, value, child) {
+                    return Text(value.isNotEmpty ? value : "Please choose a translate language");
+                  },
+                ))),
         ],
       ),
     );
@@ -178,9 +180,7 @@ class _TranslationPageState extends State<TranslationPage> {
     Phrase phrase = new Phrase(id, widget.text, widget.translateFrom,
         translate.text, targetId, DateTime.now().toString());
     PhraseDatabaseProvider.db.addPhraseToDatabase(phrase);
-    setState(() {
-      translatedText = translate.text;
-    });
+    translatedText.value = translate.text;
   }
 
   _switchLang(selectedVal) {
