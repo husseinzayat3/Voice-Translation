@@ -108,17 +108,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   void readPhrasesDb() async {
-    List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
-    if (mounted && phrases != null) {
-      setState(() {
-        list = phrases;
-      });
+    try {
+      List<Phrase> phrases = await widget.dbProvider.getAllPhrases();
+      if (mounted && phrases != null) {
+        setState(() {
+          list = phrases;
+        });
+      }
+    } catch (e) {
+      print('Error fetching phrases: $e');
     }
   }
 
   void readSharedPrefs() async {
     final key = 'audio';
-    List<String> audio = widget.sharedPreferences.getStringList(key);
+    try {
+      List<String> audio = widget.sharedPreferences.getStringList(key) ?? [];
+      if (audio.isEmpty) {
+        print('No audio data found in shared preferences.');
+      }
+    } catch (e) {
+      print('Error reading shared preferences: $e');
+    }
 
     
   }
