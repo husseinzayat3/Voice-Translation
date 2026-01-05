@@ -71,14 +71,18 @@ class _RecordingPageState extends State<RecordingPage> {
 
       if (!mounted) return;
 
-      setState(() {
-        _hasSpeech = hasSpeech;
-      });
+      if (mounted) {
+        setState(() {
+          _hasSpeech = hasSpeech;
+        });
+      }
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        lastError = "Initialization failed: $e";
-      });
+      if (mounted) {
+        setState(() {
+          lastError = "Initialization failed: $e";
+        });
+      }
     }
   }
 
