@@ -110,7 +110,7 @@ class _RecordingPageState extends State<RecordingPage> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 50),
-          child:Text("Select your language",textAlign: TextAlign.center,),),
+          child: _buildLanguageSelectionText(),),
           // select the language to be translated
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -214,3 +214,11 @@ class _RecordingPageState extends State<RecordingPage> {
     });
   }
 }
+
+
+  Widget _buildLanguageSelectionText() {
+    return Text(
+      "Select your language",
+      textAlign: TextAlign.center,
+    );
+  }
