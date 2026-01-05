@@ -82,7 +82,7 @@ class PhraseDatabaseProvider {
     final db = await database;
     try {
       var response = await db.query("Phrase", where: "_id = ?", whereArgs: [id]);
-      return response.isNotEmpty ? Phrase.fromMap(response.first) : null;
+      return response != null && response.isNotEmpty ? Phrase.fromMap(response.first) : null;
     } catch (e) {
       _logger.e('Error fetching phrase with id $id', e);
       return null;
@@ -94,7 +94,7 @@ class PhraseDatabaseProvider {
     try {
       var response = await db.query("Phrase");
       _logger.i('Fetched all phrases: ${response.toString()}');
-      List<Phrase> list = response.map((c) => Phrase.fromMap(c)).toList();
+      List<Phrase> list = response != null ? response.map((c) => Phrase.fromMap(c)).toList() : [];
       return list;
     } catch (e) {
       _logger.e('Error fetching all phrases', e);
