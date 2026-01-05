@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                   if (mounted) {
                   Navigator.push(
                       context,
-                      new MaterialPageRoute(
+                      const MaterialPageRoute(
                           builder: (context) => RecordingPage()));
                 }
                 },
