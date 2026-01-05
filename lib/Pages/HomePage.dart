@@ -62,8 +62,8 @@ class _HomePageState extends State<HomePage> {
                   return Column(
                     children: snapshot.data.map((phrase) {
                       return ListTile(
-                        title: Text("${phrase.inputText}(${phrase.inputLang})"),
-                        subtitle: Text("${phrase.outputText}(${phrase.outputLang})"),
+                        title: Text(Uri.encodeComponent(phrase.inputText) + "(${phrase.inputLang})"),
+                        subtitle: Text(Uri.encodeComponent(phrase.outputText) + "(${phrase.outputLang})"),
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () async {
