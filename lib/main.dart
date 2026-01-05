@@ -48,8 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!mounted) return Container();
-    return new HomePage();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: HomePageBody(),
+    );
   }
 
   @override
@@ -67,4 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+}
+
+class HomePageBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Welcome to the Home Page!'),
+    );
+  }
 }
