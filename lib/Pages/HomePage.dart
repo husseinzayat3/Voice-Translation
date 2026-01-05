@@ -146,8 +146,8 @@ class _HomePageState extends State<HomePage> {
 
   void readSharedPrefs() async {
     final key = 'audio';
-    String encryptedAudio = await _secureStorage.read(key: key);
-    if (encryptedAudio != null) {
+    String? encryptedAudio = await _secureStorage.read(key: key);
+    if (encryptedAudio != null && encryptedAudio.isNotEmpty) {
       List<String> audio = encryptedAudio.split(',');
       // Process the decrypted audio list
     }
