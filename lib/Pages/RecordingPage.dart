@@ -7,7 +7,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:voice_translator/Pages/TranslatePage.dart';
 
 class RecordingPage extends StatefulWidget {
-  final FlutterSecureStorage secureStorage;
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true), iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock));
   final stt.SpeechToText speechToText;
 
   RecordingPage({Key? key, @required this.secureStorage, @required this.speechToText}) : assert(secureStorage != null, 'secureStorage must not be null'), assert(speechToText != null, 'speechToText must not be null'), super(key: key);
